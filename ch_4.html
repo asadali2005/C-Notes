@@ -1,0 +1,1844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chapter 4: Fundamental Data Types — Complete Study Guide</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #F7F5FA;
+      --primary:   #7C6ACF;
+      --accent:    #F4A261;
+      --text:      #2E2A38;
+      --highlight: #B7A9E3;
+      --white:     #FFFFFF;
+      --light-purple: #EDE9F8;
+      --dark-text: #1A1724;
+      --code-bg:   #2E2A38;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.75;
+    }
+
+    .page-wrapper { display: flex; min-height: 100vh; }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 290px;
+      min-width: 290px;
+      background: var(--white);
+      border-right: 2px solid var(--highlight);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 28px 0 40px 0;
+      flex-shrink: 0;
+      box-shadow: 3px 0 18px rgba(124,106,207,0.07);
+      z-index: 100;
+    }
+
+    .sidebar-header {
+      padding: 0 22px 18px 22px;
+      border-bottom: 2px solid var(--light-purple);
+      margin-bottom: 14px;
+    }
+
+    .sidebar-header h2 { font-size: 13px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--primary); }
+    .sidebar-header p  { font-size: 11.5px; color: #8880A0; margin-top: 3px; }
+
+    .toc-list { list-style: none; }
+    .toc-list li a {
+      display: block; padding: 6px 22px;
+      font-size: 13px; color: var(--text);
+      text-decoration: none; border-left: 3px solid transparent;
+      transition: all 0.18s ease; line-height: 1.4;
+    }
+    .toc-list li a:hover { background: var(--light-purple); border-left-color: var(--primary); color: var(--primary); }
+    .toc-list .toc-h2 > a { font-weight: 700; font-size: 13px; padding-top: 9px; }
+    .toc-list .toc-h3 > a { padding-left: 36px; font-size: 12px; color: #6B6485; }
+
+    .toc-badge {
+      display: inline-block; background: var(--primary); color: #fff;
+      border-radius: 50px; font-size: 10px; font-weight: 700;
+      padding: 1px 7px; margin-right: 5px;
+    }
+
+    /* MAIN */
+    .main-content { flex: 1; padding: 50px 60px 80px 60px; max-width: 980px; }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, var(--primary) 0%, #5a48b0 100%);
+      border-radius: 20px; padding: 48px 50px; margin-bottom: 56px;
+      color: #fff; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; top: -60px; right: -60px;
+      width: 260px; height: 260px; border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+    }
+    .hero-tag {
+      display: inline-block; background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.3); border-radius: 50px;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 4px 14px; margin-bottom: 18px;
+    }
+    .hero h1 { font-size: 2.4rem; font-weight: 800; line-height: 1.2; margin-bottom: 14px; }
+    .hero p  { font-size: 1.05rem; opacity: 0.88; max-width: 600px; }
+    .hero-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+    .hero-pill {
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 50px; font-size: 12px; padding: 4px 13px; color: #fff;
+    }
+
+    /* SECTIONS */
+    .section { margin-bottom: 72px; }
+
+    .section-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--light-purple); border: 1.5px solid var(--highlight);
+      border-radius: 50px; font-size: 11.5px; font-weight: 700;
+      letter-spacing: 0.09em; text-transform: uppercase;
+      color: var(--primary); padding: 4px 14px; margin-bottom: 14px;
+    }
+
+    h2 {
+      font-size: 1.75rem; font-weight: 800; color: var(--dark-text);
+      margin-bottom: 8px; padding-bottom: 10px;
+      border-bottom: 3px solid var(--highlight);
+    }
+    h3 { font-size: 1.22rem; font-weight: 700; color: var(--primary); margin: 30px 0 12px 0; }
+    h4 { font-size: 1.05rem; font-weight: 700; color: var(--text); margin: 20px 0 8px 0; }
+    p  { margin-bottom: 14px; }
+    ul, ol { margin: 10px 0 14px 24px; }
+    li { margin-bottom: 6px; }
+    strong { color: var(--dark-text); }
+
+    /* BOXES */
+    .box { border-radius: 12px; padding: 20px 24px; margin: 22px 0; border-left: 5px solid; }
+    .box-title {
+      font-size: 11px; font-weight: 800; letter-spacing: 0.12em;
+      text-transform: uppercase; margin-bottom: 8px;
+      display: flex; align-items: center; gap: 7px;
+    }
+    .box-icon {
+      width: 20px; height: 20px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 900; flex-shrink: 0;
+    }
+
+    .box-definition { background: #EDE9F8; border-left-color: var(--primary); }
+    .box-definition .box-title { color: var(--primary); }
+    .box-definition .box-icon  { background: var(--primary); color: #fff; }
+
+    .box-formula { background: #FFF4EC; border-left-color: var(--accent); }
+    .box-formula .box-title { color: #C4621A; }
+    .box-formula .box-icon  { background: var(--accent); color: #fff; }
+
+    .box-note { background: #E8F5E9; border-left-color: #4CAF50; }
+    .box-note .box-title { color: #2E7D32; }
+    .box-note .box-icon  { background: #4CAF50; color: #fff; }
+
+    .box-warning { background: #FFF3E0; border-left-color: #FF9800; }
+    .box-warning .box-title { color: #E65100; }
+    .box-warning .box-icon  { background: #FF9800; color: #fff; }
+
+    .box-danger { background: #FFEBEE; border-left-color: #E74C3C; }
+    .box-danger .box-title { color: #B71C1C; }
+    .box-danger .box-icon  { background: #E74C3C; color: #fff; }
+
+    .box-practice { background: #E3F2FD; border-left-color: #1976D2; }
+    .box-practice .box-title { color: #0D47A1; }
+    .box-practice .box-icon  { background: #1976D2; color: #fff; }
+
+    /* SUMMARY BOX */
+    .summary-box {
+      background: linear-gradient(135deg, var(--light-purple) 0%, #f0edfb 100%);
+      border: 2px solid var(--highlight); border-radius: 14px;
+      padding: 24px 28px; margin-top: 36px;
+    }
+    .summary-box h4 {
+      color: var(--primary); font-size: 0.95rem; font-weight: 800;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      margin: 0 0 14px 0; display: flex; align-items: center; gap: 8px;
+    }
+    .summary-box ul { margin-left: 18px; }
+    .summary-box li { font-size: 14px; margin-bottom: 5px; }
+
+    /* TABLES */
+    .table-wrap { overflow-x: auto; margin: 20px 0; border-radius: 12px; box-shadow: 0 2px 12px rgba(124,106,207,0.1); }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    thead tr { background: var(--primary); color: #fff; }
+    thead th { padding: 13px 16px; text-align: left; font-weight: 700; }
+    tbody tr:nth-child(even) { background: var(--light-purple); }
+    tbody tr:nth-child(odd)  { background: var(--white); }
+    tbody tr:hover { background: #ddd8f5; }
+    td { padding: 11px 16px; border-bottom: 1px solid #e8e3f5; }
+
+    /* ── CODE BLOCKS (matching the instruction template) ── */
+    .code-block {
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 22px 0;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      background-color: #2E2A38;
+      width: 100%;
+    }
+
+    .code-header {
+      background-color: #7C6ACF;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+    }
+
+    .code-dots { display: flex; gap: 6px; }
+    .code-dot  { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-orange { background: #F4A261; }
+    .dot-purple { background: #B7A9E3; }
+    .dot-white  { background: #F7F5FA; }
+
+    .code-filename {
+      color: #F7F5FA;
+      margin-left: 15px;
+      font-size: 13px;
+      font-weight: bold;
+      opacity: 0.9;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+
+    /* The <pre> sits directly inside .code-block, just like the template */
+    .code-block pre {
+      margin: 0;
+      padding: 25px;
+      color: #F7F5FA;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      overflow-x: auto;
+    }
+
+    .code-block pre code {
+      background: none;
+      color: inherit;
+      padding: 0;
+      border-radius: 0;
+      font-size: inherit;
+      font-weight: normal;
+    }
+
+    /* Syntax colours — matching the instruction guide */
+    .cc { color: #B5CEA8; } /* comments          */
+    .ck { color: #9CDCFE; } /* keywords/vars      */
+    .ct { color: #4EC9B0; } /* types/preprocessor */
+    .cs { color: #F4A261; } /* strings/literals   */
+    .co { color: #F7F5FA; } /* operators/braces   */
+    .cf { color: #DCDCAA; } /* function names     */
+
+    /* INLINE CODE */
+    code {
+      background: #EDE9F8; color: #5a3fb5;
+      border-radius: 5px; padding: 2px 7px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.88em; font-weight: 600;
+    }
+
+    /* FORMULA DISPLAY */
+    .formula-display {
+      background: var(--light-purple); border: 2px solid var(--highlight);
+      border-radius: 10px; padding: 18px 24px; margin: 16px 0;
+      text-align: center; font-size: 1.05rem; font-weight: 700;
+      color: var(--dark-text); font-family: 'Georgia', serif;
+    }
+
+    /* QUIZ */
+    .quiz-section { background: var(--white); border: 2px solid var(--highlight); border-radius: 14px; margin: 28px 0; overflow: hidden; }
+    .quiz-header  { background: linear-gradient(90deg, var(--primary) 0%, #6052b8 100%); color: #fff; padding: 14px 22px; font-weight: 800; font-size: 14px; }
+    .quiz-body    { padding: 20px 22px; }
+    .quiz-q { background: var(--light-purple); border-radius: 9px; padding: 14px 18px; margin-bottom: 12px; font-weight: 700; font-size: 14px; }
+    .quiz-a { background: #F0FFF4; border-left: 4px solid #4CAF50; border-radius: 0 9px 9px 0; padding: 14px 18px; margin-bottom: 20px; font-size: 14px; }
+    .quiz-a-label { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #2E7D32; margin-bottom: 6px; }
+
+    /* COMPARE GRID */
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+    .compare-card { background: var(--white); border: 2px solid var(--highlight); border-radius: 12px; padding: 18px 20px; }
+    .compare-card h4 { color: var(--primary); font-size: 0.95rem; margin: 0 0 10px 0; padding-bottom: 8px; border-bottom: 2px solid var(--light-purple); }
+    .compare-card ul { margin-left: 16px; font-size: 14px; }
+
+    /* DIVIDER */
+    .divider { height: 3px; background: linear-gradient(90deg, var(--primary), var(--highlight), transparent); border-radius: 10px; margin: 48px 0; }
+
+    /* MASTER SUMMARY */
+    .master-summary { background: linear-gradient(135deg, var(--primary) 0%, #5042a8 100%); border-radius: 18px; padding: 42px 46px; color: #fff; margin-top: 60px; }
+    .master-summary h2 { color: #fff; border-bottom-color: rgba(255,255,255,0.25); font-size: 1.6rem; }
+    .master-summary h3 { color: var(--accent); margin-top: 24px; font-size: 1.05rem; }
+    .master-summary p  { opacity: 0.9; font-size: 14.5px; }
+    .master-summary ul { margin-left: 20px; }
+    .master-summary li { font-size: 14px; margin-bottom: 5px; opacity: 0.92; }
+    .ms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 22px; }
+    .ms-card { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 18px 20px; }
+    .ms-card h4 { color: var(--accent); font-size: 0.88rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+    .ms-card ul { margin-left: 16px; }
+    .ms-card li { font-size: 13px; opacity: 0.9; margin-bottom: 4px; }
+
+    .back-top {
+      display: inline-block; background: var(--primary); color: #fff;
+      border-radius: 50px; padding: 8px 20px; font-size: 13px;
+      font-weight: 700; text-decoration: none; margin-top: 30px;
+    }
+    .back-top:hover { background: #5a48b0; }
+
+    @media (max-width: 1050px) {
+      .sidebar { display: none; }
+      .main-content { padding: 30px 24px 60px 24px; }
+      .ms-grid, .compare-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <h2>📚 Table of Contents</h2>
+      <p>Chapter 4 — Fundamental Data Types</p>
+    </div>
+    <ul class="toc-list">
+      <li class="toc-h2"><a href="#sec-4-1"><span class="toc-badge">4.1</span>Intro to Data Types</a></li>
+      <li class="toc-h3"><a href="#sec-4-1-bits">Bits, Bytes &amp; Memory</a></li>
+      <li class="toc-h3"><a href="#sec-4-1-types">Fundamental Types Table</a></li>
+      <li class="toc-h3"><a href="#sec-4-1-ii">Integer vs Integral</a></li>
+      <li class="toc-h2"><a href="#sec-4-2"><span class="toc-badge">4.2</span>Void</a></li>
+      <li class="toc-h2"><a href="#sec-4-3"><span class="toc-badge">4.3</span>Object Sizes &amp; sizeof</a></li>
+      <li class="toc-h3"><a href="#sec-4-3-sizes">Type Sizes Table</a></li>
+      <li class="toc-h2"><a href="#sec-4-4"><span class="toc-badge">4.4</span>Signed Integers</a></li>
+      <li class="toc-h3"><a href="#sec-4-4-ranges">Ranges &amp; Overflow</a></li>
+      <li class="toc-h3"><a href="#sec-4-4-division">Integer Division</a></li>
+      <li class="toc-h3"><a href="#sec-4-4-quiz">Quiz Solutions</a></li>
+      <li class="toc-h2"><a href="#sec-4-5"><span class="toc-badge">4.5</span>Unsigned Integers</a></li>
+      <li class="toc-h3"><a href="#sec-4-5-wrapping">Modulo Wrapping</a></li>
+      <li class="toc-h3"><a href="#sec-4-5-danger">Why to Avoid Them</a></li>
+      <li class="toc-h2"><a href="#sec-4-6"><span class="toc-badge">4.6</span>Fixed-Width &amp; size_t</a></li>
+      <li class="toc-h3"><a href="#sec-4-6-fast">Fast &amp; Least Types</a></li>
+      <li class="toc-h3"><a href="#sec-4-6-sizet">std::size_t</a></li>
+      <li class="toc-h2"><a href="#sec-4-7"><span class="toc-badge">4.7</span>Scientific Notation</a></li>
+      <li class="toc-h3"><a href="#sec-4-7-sigfigs">Significant Digits</a></li>
+      <li class="toc-h3"><a href="#sec-4-7-quiz">Quiz Solutions</a></li>
+      <li class="toc-h2"><a href="#sec-4-8"><span class="toc-badge">4.8</span>Floating Point Numbers</a></li>
+      <li class="toc-h3"><a href="#sec-4-8-precision">Precision &amp; Rounding</a></li>
+      <li class="toc-h3"><a href="#sec-4-8-special">NaN &amp; Inf</a></li>
+      <li class="toc-h2"><a href="#sec-4-9"><span class="toc-badge">4.9</span>Boolean Values</a></li>
+      <li class="toc-h3"><a href="#sec-4-9-io">Input &amp; Output</a></li>
+      <li class="toc-h2"><a href="#sec-4-10"><span class="toc-badge">4.10</span>if Statements</a></li>
+      <li class="toc-h3"><a href="#sec-4-10-quiz">Quiz Solutions</a></li>
+      <li class="toc-h2"><a href="#sec-4-11"><span class="toc-badge">4.11</span>Chars</a></li>
+      <li class="toc-h3"><a href="#sec-4-11-escape">Escape Sequences</a></li>
+      <li class="toc-h2"><a href="#sec-4-12"><span class="toc-badge">4.12</span>Type Conversion &amp; static_cast</a></li>
+      <li class="toc-h3"><a href="#sec-4-12-quiz">Quiz Solutions</a></li>
+      <li class="toc-h2"><a href="#sec-4-x"><span class="toc-badge">4.x</span>Final Chapter Quiz</a></li>
+      <li class="toc-h2"><a href="#sec-master"><span class="toc-badge">★</span>Master Summary</a></li>
+    </ul>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-tag">C++ Study Guide</div>
+      <h1>Chapter 4<br>Fundamental Data Types</h1>
+      <p>A complete, deeply explained reference covering every concept — from variables and memory to type conversions, floating-point precision, booleans, characters, and more.</p>
+      <div class="hero-pills">
+        <span class="hero-pill">🔢 Integers</span>
+        <span class="hero-pill">🔣 Chars</span>
+        <span class="hero-pill">🎯 Booleans</span>
+        <span class="hero-pill">📐 Floating Point</span>
+        <span class="hero-pill">🔄 Type Conversion</span>
+        <span class="hero-pill">💡 sizeof</span>
+        <span class="hero-pill">✅ Quiz Solutions</span>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ 4.1 ═══════════════════════════════════ -->
+    <section class="section" id="sec-4-1">
+      <div class="section-label">Section 4.1</div>
+      <h2>Introduction to Fundamental Data Types</h2>
+      <p>A <strong>variable</strong> is a named region of memory used to store information during a program's execution. To understand data types, you first need to understand how memory is physically organised.</p>
+
+      <h3 id="sec-4-1-bits">Bits, Bytes &amp; Memory Addresses</h3>
+
+      <div class="box box-definition">
+        <div class="box-title"><div class="box-icon">D</div>Bit</div>
+        The smallest unit of memory. A bit holds exactly one of two values: <strong>0</strong> or <strong>1</strong>. All data — numbers, text, images, programs — is ultimately a sequence of bits.
+      </div>
+
+      <div class="box box-definition">
+        <div class="box-title"><div class="box-icon">D</div>Byte</div>
+        A group of bits operated on as a single unit. The modern standard defines <strong>1 byte = 8 sequential bits</strong>. Memory is organised into sequential <strong>memory addresses</strong>, and each address holds exactly 1 byte.
+      </div>
+
+      <div class="box box-formula">
+        <div class="box-title"><div class="box-icon">F</div>Capacity Formula</div>
+        An object using <strong>n bits</strong> can store <strong>2<sup>n</sup> unique values</strong>.
+        <div class="formula-display">Unique Values = 2<sup>n</sup></div>
+        <strong>Example:</strong> 1 byte = 8 bits → 2<sup>8</sup> = <strong>256</strong> unique values (0–255 unsigned, or −128 to +127 signed).
+      </div>
+
+      <div class="box box-definition">
+        <div class="box-title"><div class="box-icon">D</div>Data Type</div>
+        A <strong>data type</strong> tells the compiler how to interpret the contents of memory in a meaningful way.
+        <ul style="margin-top:10px;margin-left:20px;">
+          <li>When you <em>store</em> a value, the compiler/CPU encodes it into the correct bit pattern.</li>
+          <li>When you <em>read</em> a value, the bit pattern is decoded back into the original value.</li>
+        </ul>
+        Without a data type the compiler cannot know whether a bit sequence represents an integer, a character, a boolean, etc.
+      </div>
+
+      <h3 id="sec-4-1-types">Fundamental Data Types in C++</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Type(s)</th><th>Category</th><th>Meaning</th><th>Example</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>float</code>, <code>double</code>, <code>long double</code></td><td>Floating Point</td><td>Numbers with a fractional part</td><td><code>3.14159</code></td></tr>
+            <tr><td><code>bool</code></td><td>Integral (Boolean)</td><td>True or false</td><td><code>true</code></td></tr>
+            <tr><td><code>char</code>, <code>wchar_t</code>, <code>char8_t</code>, <code>char16_t</code>, <code>char32_t</code></td><td>Integral (Character)</td><td>A single character of text</td><td><code>'c'</code></td></tr>
+            <tr><td><code>short</code>, <code>int</code>, <code>long</code>, <code>long long</code></td><td>Integral (Integer)</td><td>Positive/negative whole numbers including 0</td><td><code>64</code></td></tr>
+            <tr><td><code>std::nullptr_t</code></td><td>Null Pointer</td><td>A null pointer</td><td><code>nullptr</code></td></tr>
+            <tr><td><code>void</code></td><td>Void</td><td>No type</td><td>n/a</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 id="sec-4-1-ii">Integer vs. Integral Types — A Critical Distinction</h3>
+      <div class="compare-grid">
+        <div class="compare-card">
+          <h4>Standard Integer Types</h4>
+          <p style="font-size:14px;">Types specifically designed for whole numbers:</p>
+          <ul><li><code>short</code></li><li><code>int</code></li><li><code>long</code></li><li><code>long long</code></li><li>Their <code>signed</code>/<code>unsigned</code> variants</li></ul>
+        </div>
+        <div class="compare-card">
+          <h4>Integral Types (Broader)</h4>
+          <p style="font-size:14px;">Types stored as integers internally, regardless of purpose:</p>
+          <ul><li><code>bool</code></li><li>All <code>char</code> variants</li><li>All standard integer types</li></ul>
+          <p style="font-size:13px;color:#777;margin-top:8px;">⚠️ <code>enum</code> is NOT considered integral even if stored as an integer.</p>
+        </div>
+      </div>
+
+      <div class="box box-note">
+        <div class="box-title"><div class="box-icon">ℹ</div>Nomenclature: The <code>_t</code> Suffix</div>
+        Many modern types carry a <code>_t</code> suffix (e.g., <code>std::nullptr_t</code>, <code>std::size_t</code>). It simply stands for <strong>"type"</strong> — a naming convention signalling that the identifier is a type alias.
+      </div>
+
+      <div class="summary-box">
+        <h4>🗝 Section 4.1 Summary</h4>
+        <ul>
+          <li>Variables are named memory regions. Memory is organised in byte-sized addresses.</li>
+          <li>1 byte = 8 bits. An n-bit object holds 2<sup>n</sup> unique values.</li>
+          <li>A <strong>data type</strong> tells the compiler how to interpret bit sequences.</li>
+          <li>C++ fundamental types: floating-point, integral (bool, char, integer), null pointer, void.</li>
+          <li><strong>Integral</strong> is broader than <strong>integer</strong> — it includes bool and char types.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ═══════════════════════════════════ 4.2 ═══════════════════════════════════ -->
+    <section class="section" id="sec-4-2">
+      <div class="section-label">Section 4.2</div>
+      <h2>Void</h2>
+
+      <div class="box box-definition">
+        <div class="box-title"><div class="box-icon">D</div>Void</div>
+        <code>void</code> means <strong>"no type"</strong>. It is an <strong>incomplete type</strong> — declared but not fully defined — so the compiler cannot determine how much memory to allocate.
+        <strong>Incomplete types cannot be instantiated.</strong>
+      </div>
+
+      <h3>Uses of <code>void</code></h3>
+      <h4>1. Functions that do not return a value</h4>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots">
+            <div class="code-dot dot-orange"></div>
+            <div class="code-dot dot-purple"></div>
+            <div class="code-dot dot-white"></div>
+          </div>
+          <span class="code-filename">void_return.cpp</span>
+        </div>
+        <pre><code><span class="ct">#include</span> <span class="cs">&lt;iostream&gt;</span>
+
+<span class="cc">// void return type means "return nothing"</span>
+<span class="ct">void</span> <span class="cf">writeValue</span>(<span class="ct">int</span> <span class="ck">x</span>) {
+    <span class="co">std::cout &lt;&lt;</span> <span class="cs">"The value of x is: "</span> <span class="co">&lt;&lt;</span> <span class="ck">x</span> <span class="co">&lt;&lt;</span> <span class="cs">'\n'</span><span class="co">;</span>
+    <span class="cc">// No return statement needed</span>
+}
+
+<span class="ct">int</span> <span class="cf">main</span>() {
+    <span class="cf">writeValue</span>(<span class="cs">42</span>)<span class="co">;</span>
+    <span class="ck">return</span> <span class="cs">0</span><span class="co">;</span>
+}</code></pre>
+      </div>
+
+      <h4>2. Functions that take no parameters (Deprecated in C++)</h4>
+      <div class="compare-grid">
+        <div class="compare-card">
+          <h4>❌ Old C-style (Avoid)</h4>
+          <code>int getValue(void) { ... }</code>
+        </div>
+        <div class="compare-card">
+          <h4>✅ Modern C++ (Preferred)</h4>
+          <code>int getValue() { ... }</code>
+        </div>
+      </div>
+
+      <div class="box box-practice">
+        <div class="box-title"><div class="box-icon">✓</div>Best Practice</div>
+        Always use an empty parameter list <code>()</code> instead of <code>(void)</code> in C++.
+      </div>
+
+      <div class="summary-box">
+        <h4>🗝 Section 4.2 Summary</h4>
+        <ul>
+          <li><code>void</code> = "no type" — an incomplete type that cannot be instantiated as a variable.</li>
+          <li>Used as a return type for functions that return nothing.</li>
+          <li>Do NOT write <code>(void)</code> for empty parameter lists in C++ — use <code>()</code>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ═══════════════════════════════════ 4.3 ═══════════════════════════════════ -->
+    <section class="section" id="sec-4-3">
+      <div class="section-label">Section 4.3</div>
+      <h2>Object Sizes and the <code>sizeof</code> Operator</h2>
+
+      <p>Objects may use <strong>1, 2, 4, 8, or more consecutive memory addresses</strong>. The number of bytes directly determines how many unique values the type can represent.</p>
+
+      <div class="box box-formula">
+        <div class="box-title"><div class="box-icon">F</div>Capacity from Bytes</div>
+        <div class="formula-display">Unique Values = 2<sup>(bytes × 8)</sup></div>
+        1 byte → 256 values &nbsp;|&nbsp; 2 bytes → 65,536 values &nbsp;|&nbsp; 4 bytes → ~4.29 billion values
+      </div>
+
+      <div class="box box-warning">
+        <div class="box-title"><div class="box-icon">⚠</div>C++ Guarantees Minimums, NOT Exact Sizes</div>
+        The C++ standard only specifies <em>minimum</em> sizes. Actual sizes depend on the compiler and target architecture.
+        <ul style="margin-top:8px;margin-left:20px;">
+          <li>A byte must be at least 8 bits.</li>
+          <li><code>char</code> is exactly 1 byte (guaranteed).</li>
+          <li><code>short</code> ≥ 16 bits &nbsp;|&nbsp; <code>int</code> ≥ 16 bits &nbsp;|&nbsp; <code>long</code> ≥ 32 bits &nbsp;|&nbsp; <code>long long</code> ≥ 64 bits</li>
+        </ul>
+      </div>
+
+      <h3 id="sec-4-3-sizes">Typical Sizes on Modern 64-bit Systems</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Type</th><th>Typical Size</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>bool</code></td><td>1 byte</td><td>Only 1 bit used logically</td></tr>
+            <tr><td><code>char</code></td><td>1 byte</td><td>Always exactly 1 byte (guaranteed)</td></tr>
+            <tr><td><code>short</code></td><td>2 bytes</td><td>—</td></tr>
+            <tr><td><code>int</code></td><td>4 bytes</td><td>Most common on modern systems</td></tr>
+            <tr><td><code>long</code></td><td>4 or 8 bytes</td><td>4 on Windows 64-bit; 8 on Linux/macOS 64-bit</td></tr>
+            <tr><td><code>long long</code></td><td>8 bytes</td><td>—</td></tr>
+            <tr><td><code>float</code></td><td>4 bytes</td><td>Single-precision IEEE 754</td></tr>
+            <tr><td><code>double</code></td><td>8 bytes</td><td>Double-precision IEEE 754</td></tr>
+            <tr><td><code>long double</code></td><td>8, 12, or 16 bytes</td><td>Platform-dependent — avoid</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>The <code>sizeof</code> Operator</h3>
+
+      <div class="box box-definition">
+        <div class="box-title"><div class="box-icon">D</div>sizeof</div>
+        A <strong>unary operator</strong> that returns the size (in bytes) of a type or variable. Evaluated at <strong>compile time</strong> — no runtime cost. Return type is <code>std::size_t</code>.
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots">
+            <div class="code-dot dot-orange"></div>
+            <div class="code-dot dot-purple"></div>
+            <div class="code-dot dot-white"></div>
+          </div>
+          <span class="code-filename">sizeof_demo.cpp</span>
+        </div>
+        <pre><code><span class="ct">#include</span> <span class="cs">&lt;iostream&gt;</span>
+
+<span class="ct">int</span> <span class="cf">main</span>() {
+    <span class="ct">int</span> <span class="ck">x</span>{}<span class="co">;</span>
+
+    <span class="cc">// sizeof with a type name — parentheses required</span>
+    <span class="co">std::cout &lt;&lt;</span> <span class="cs">"bool:      "</span> <span class="co">&lt;&lt;</span> <span class="ck">sizeof</span>(<span class="ct">bool</span>)      <span class="co">&lt;&lt;</span> <span class="cs">" byte(s)\n"</span><span class="co">;</span>
+    <span class="co">std::cout &lt;&lt;</span> <span class="cs">"char:      "</span> <span class="co">&lt;&lt;</span> <span class="ck">sizeof</span>(<span class="ct">char</span>)      <span class="co">&lt;&lt;</span> <span class="cs">" byte(s)\n"</span><span class="co">;</span>
+    <span class="co">std::cout &lt;&lt;</span> <span class="cs">"short:     "</span> <span class="co">&lt;&lt;</span> <span class="ck">sizeof</span>(<span class="ct">short</span>)     <span class="co">&lt;&lt;</span> <span class="cs">" byte(s)\n"</span><span class="co">;</span>
+    <span class="co">std::cout &lt;&lt;</span> <span class="cs">"int:       "</span> <span class="co">&lt;&lt;</span> <span class="ck">sizeof</span>(<span class="ct">int</span>)       <span class="co">&lt;&lt;</span> <span class="cs">" byte(s)\n"</span><span class="co">;</span>
+    <span class="co">std::cout &lt;&lt;</span> <span class="cs">"long long: "</span> <span class="co">&lt;&lt;</span> <span class="ck">sizeof</span>(<span class="ct">long long</span>) <span class="co">&lt;&lt;</span> <span class="cs">" byte(s)\n"</span><span class="co">;</span>
+    <span class="co">std::cout &lt;&lt;</span> <span class="cs">"double:    "</span> <span class="co">&lt;&lt;</span> <span class="ck">sizeof</span>(<span class="ct">double</span>)    <span class="co">&lt;&lt;</span> <span class="cs">" byte(s)\n"</span><span class="co">;</span>
+
+    <span class="cc">// sizeof with a variable — parentheses optional but conventional</span>
+    <span class="co">std::cout &lt;&lt;</span> <span class="cs">"x:         "</span> <span class="co">&lt;&lt;</span> <span class="ck">sizeof</span>(<span class="ck">x</span>) <span class="co">&lt;&lt;</span> <span class="cs">" byte(s)\n"</span><span class="co">;</span>
+
+    <span class="ck">return</span> <span class="cs">0</span><span class="co">;</span>
+}</code></pre>
+      </div>
+
+      <div class="summary-box">
+        <h4>🗝 Section 4.3 Summary</h4>
+        <ul>
+          <li>Objects occupy 1 or more consecutive bytes. More bytes = more possible values.</li>
+          <li>C++ only guarantees <em>minimum</em> sizes — actual sizes are platform-dependent.</li>
+          <li><code>sizeof(type_or_var)</code> returns the size in bytes at compile time, returning type <code>std::size_t</code>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ═══════════════════════════════════ 4.4 ═══════════════════════════════════ -->
+    <section class="section" id="sec-4-4">
+      <div class="section-label">Section 4.4</div>
+      <h2>Signed Integers</h2>
+
+      <div class="box box-definition">
+        <div class="box-title"><div class="box-icon">D</div>Integer</div>
+        An <strong>integer</strong> is an integral type representing whole numbers (positive, negative, and zero). In C++, integers are <strong>signed by default</strong> — the sign is stored as part of the value.
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Preferred Form</th><th>Verbose Equivalents (Avoid)</th></tr></thead>
+          <tbody>
+            <tr><td><code>short</code></td><td><code>short int</code>, <code>signed short</code>, <code>signed short int</code></td></tr>
+            <tr><td><code>int</code></td><td><code>signed int</code>, <code>signed</code></td></tr>
+            <tr><td><code>long</code></td><td><code>long int</code>, <code>signed long</code>, <code>signed long int</code></td></tr>
+            <tr><td><code>long long</code></td><td><code>long long int</code>, <code>signed long long</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 id="sec-4-4-ranges">Signed Integer Ranges</h3>
+
+      <div class="box box-formula">
+        <div class="box-title"><div class="box-icon">F</div>Signed Integer Range Formula</div>
+        <div class="formula-display">−(2<sup>n−1</sup>) &nbsp; to &nbsp; 2<sup>n−1</sup> − 1</div>
+        where <strong>n</strong> = number of bits. Half the patterns represent negatives; the other half represent zero and positives.
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Type</th><th>Typical Size</th><th>Minimum</th><th>Maximum</th></tr></thead>
+          <tbody>
+            <tr><td><code>short</code></td><td>16 bits (2 bytes)</td><td>−32,768</td><td>32,767</td></tr>
+            <tr><td><code>int</code></td><td>32 bits (4 bytes)</td><td>−2,147,483,648</td><td>2,147,483,647</td></tr>
+            <tr><td><code>long</code></td><td>32 or 64 bits</td><td>≤ −2,147,483,648</td><td>≥ 2,147,483,647</td></tr>
+            <tr><td><code>long long</code></td><td>64 bits (8 bytes)</td><td>−9,223,372,036,854,775,808</td><td>9,223,372,036,854,775,807</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="box box-danger">
+        <div class="box-title"><div class="box-icon">!</div>Signed Integer Overflow = Undefined Behavior</div>
+        If an operation produces a value outside the range of a signed type, the result is <strong>undefined behaviour (UB)</strong>. The program may crash, produce wrong results silently, or behave differently between compilers. Never allow it.
+      </div>
+
+      <h3 id="sec-4-4-division">Integer Division — Truncation, Not Rounding</h3>
+
+      <div class="box box-warning">
+        <div class="box-title"><div class="box-icon">⚠</div>Integer Division Drops the Fraction</div>
+        Dividing two integers always produces an integer result. The fractional part is <strong>truncated toward zero</strong> — it is NOT rounded.
+        <br><br>
+        <code>8 / 5</code> → 1.6 → result: <strong>1</strong><br>
+        <code>-8 / 5</code> → −1.6 → result: <strong>−1</strong> (truncated toward zero, not toward −2)
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots">
+            <div class="code-dot dot-orange"></div>
+            <div class="code-dot dot-purple"></div>
+            <div class="code-dot dot-white"></div>
+          </div>
+          <span class="code-filename">int_division.cpp</span>
+        </div>
+        <pre><code><span class="ct">#include</span> <span class="cs">&lt;iostream&gt;</span>
+
+<span class="ct">int</span> <span class="cf">main</span>() {
+    <span class="co">std::cout &lt;&lt;</span>  <span class="cs">8</span> <span class="co">/</span>  <span class="cs">5</span> <span class="co">&lt;&lt;</span> <span class="cs">'\n'</span><span class="co">;</span>   <span class="cc">// 1  (1.6 truncated)</span>
+    <span class="co">std::cout &lt;&lt;</span> <span class="co">-</span><span class="cs">8</span> <span class="co">/</span>  <span class="cs">5</span> <span class="co">&lt;&lt;</span> <span class="cs">'\n'</span><span class="co">;</span>   <span class="cc">// -1 (-1.6 truncated toward zero)</span>
+    <span class="co">std::cout &lt;&lt;</span>  <span class="cs">8</span> <span class="co">/ -</span><span class="cs">5</span> <span class="co">&lt;&lt;</span> <span class="cs">'\n'</span><span class="co">;</span>   <span class="cc">// -1 (-1.6 truncated toward zero)</span>
+    <span class="co">std::cout &lt;&lt;</span> <span class="co">-</span><span class="cs">8</span> <span class="co">/ -</span><span class="cs">5</span> <span class="co">&lt;&lt;</span> <span class="cs">'\n'</span><span class="co">;</span>   <span class="cc">// 1  (1.6 truncated)</span>
+    <span class="ck">return</span> <span class="cs">0</span><span class="co">;</span>
+}</code></pre>
+      </div>
+
+      <h3 id="sec-4-4-quiz">Section 4.4 — Quiz Solutions</h3>
+      <div class="quiz-section">
+        <div class="quiz-header">📝 Quiz — Signed Integers</div>
+        <div class="quiz-body">
+          <div class="quiz-q">Q1: What is the range of a 5-bit signed integer?</div>
+          <div class="quiz-a">
+            <div class="quiz-a-label">✅ Solution</div>
+            Apply the formula with n = 5:<br><br>
+            Min = −(2<sup>4</sup>) = <strong>−16</strong><br>
+            Max = 2<sup>4</sup> − 1 = <strong>15</strong><br><br>
+            Range: <strong>−16 to 15</strong> (32 unique values = 2<sup>5</sup>)
+          </div>
+          <div class="quiz-q">Q2a: What is the result of <code>13 / 5</code>?</div>
+          <div class="quiz-a">
+            <div class="quiz-a-label">✅ Solution</div>
+            Exact result: 2.6 → fraction dropped → <strong>2</strong>
+          </div>
+          <div class="quiz-q">Q2b: What is the result of <code>-13 / 5</code>?</div>
+          <div class="quiz-a">
+            <div class="quiz-a-label">✅ Solution</div>
+            Exact result: −2.6 → truncated toward zero → <strong>−2</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-box">
+        <h4>🗝 Section 4.4 Summary</h4>
+        <ul>
+          <li>Signed integers: negative, zero, and positive whole numbers. Signed by default.</li>
+          <li>Range: −(2<sup>n−1</sup>) to 2<sup>n−1</sup>−1.</li>
+          <li>Signed integer overflow = <strong>undefined behavior</strong>.</li>
+          <li>Integer division truncates toward zero — it does NOT round.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ═══════════════════════════════════ 4.5 ═══════════════════════════════════ -->
+    <section class="section" id="sec-4-5">
+      <div class="section-label">Section 4.5</div>
+      <h2>Unsigned Integers, and Why to Avoid Them</h2>
+
+      <div class="box box-definition">
+        <div class="box-title"><div class="box-icon">D</div>Unsigned Integer</div>
+        An integer that holds only <strong>non-negative</strong> values (zero and positive). Declared with the <code>unsigned</code> keyword: <code>unsigned int</code>, <code>unsigned short</code>, etc.
+      </div>
+
+      <div class="box box-formula">
+        <div class="box-title"><div class="box-icon">F</div>Unsigned Range Formula</div>
+        <div class="formula-display">0 &nbsp; to &nbsp; 2<sup>n</sup> − 1</div>
+        All bit patterns are used for non-negative values — the sign bit becomes an extra magnitude bit.
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Type</th><th>Bits</th><th>Min</th><th>Max</th></tr></thead>
+          <tbody>
+            <tr><td><code>unsigned short</code></td><td>16</td><td>0</td><td>65,535</td></tr>
+            <tr><td><code>unsigned int</code></td><td>32</td><td>0</td><td>4,294,967,295</td></tr>
+            <tr><td><code>unsigned long long</code></td><td>64</td><td>0</td><td>18,446,744,073,709,551,615</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 id="sec-4-5-wrapping">Unsigned Overflow — Modulo Wrapping</h3>
+
+      <div class="box box-note">
+        <div class="box-title"><div class="box-icon">ℹ</div>Unsigned Overflow is Well-Defined (But Dangerous)</div>
+        Unlike signed overflow (UB), unsigned overflow uses <strong>modulo wrapping</strong> (modulo 2<sup>n</sup>).
+        <br><br>
+        For an 8-bit unsigned (0–255):
+        <ul style="margin-top:8px;margin-left:20px;">
+          <li>256 → wraps to <strong>0</strong></li>
+          <li>257 → wraps to <strong>1</strong></li>
+          <li>−1 → wraps to <strong>255</strong></li>
+        </ul>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots">
+            <div class="code-dot dot-orange"></div>
+            <div class="code-dot dot-purple"></div>
+            <div class="code-dot dot-white"></div>
+          </div>
+          <span class="code-filename">unsigned_wrap.cpp</span>
+        </div>
+        <pre><code><span class="ct">#include</span> <span class="cs">&lt;iostream&gt;</span>
+
+<span class="ct">int</span> <span class="cf">main</span>() {
+    <span class="ct">unsigned short</span> <span class="ck">x</span>{ <span class="cs">0</span> }<span class="co">;</span>  <span class="cc">// range: 0 to 65535</span>
+    <span class="ck">x</span> <span class="co">=</span> <span class="ck">x</span> <span class="co">-</span> <span class="cs">1</span><span class="co">;</span>                 <span class="cc">// 0 - 1 wraps to 65535!</span>
+    <span class="co">std::cout &lt;&lt;</span> <span class="ck">x</span> <span class="co">&lt;&lt;</span> <span class="cs">'\n'</span><span class="co">;</span>   <span class="cc">// prints: 65535</span>
+    <span class="ck">return</span> <span class="cs">0</span><span class="co">;</span>
+}</code></pre>
+      </div>
+
+      <h3 id="sec-4-5-danger">Why You Should Avoid Unsigned Integers for Quantities</h3>
+
+      <div class="box box-danger">
+        <div class="box-title"><div class="box-icon">!</div>Critical: Signed/Unsigned Mixing</div>
+        When you mix a <strong>signed</strong> and an <strong>unsigned</strong> value in an expression, the <strong>signed value is implicitly converted to unsigned</strong>.
+        If the signed value was negative, it wraps to a huge positive number — a silent, catastrophic bug.
+        <br><br>
+        <code>unsigned int u { 2 }; signed int s { -1 };</code><br>
+        <code>std::cout &lt;&lt; (s + u);</code> → prints <strong>4294967297</strong> instead of 1!
+      </div>
+
+      <div class="box box-practice">
+        <div class="box-title"><div class="box-icon">✓</div>Best Practices</div>
+        <ul>
+          <li><strong>Favour signed numbers</strong> for general quantities, even non-negative ones.</li>
+          <li><strong>Avoid mixing</strong> signed and unsigned in expressions.</li>
+          <li>Use unsigned only for bit manipulation, intentional wrap-around (cryptography), or specific low-level code.</li>
+        </ul>
+      </div>
+
+      <div class="summary-box">
+        <h4>🗝 Section 4.5 Summary</h4>
+        <ul>
+          <li>Unsigned integers: 0 to 2<sup>n</sup>−1. No negative values.</li>
+          <li>Overflow wraps via modulo 2<sup>n</sup> — well-defined but a frequent bug source.</li>
+          <li>Mixing signed + unsigned: signed is converted to unsigned → catastrophic if negative.</li>
+          <li>Default to signed integers for quantity values.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ═══════════════════════════════════ 4.6 ═══════════════════════════════════ -->
+    <section class="section" id="sec-4-6">
+      <div class="section-label">Section 4.6</div>
+      <h2>Fixed-Width Integers and <code>std::size_t</code></h2>
+
+      <p>Because <code>int</code> can be 16 or 32 bits depending on platform, C++11 introduced <strong>fixed-width integer types</strong> in <code>&lt;cstdint&gt;</code> that <em>guarantee</em> exact sizes everywhere.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Signed Type</th><th>Unsigned Type</th><th>Exact Size</th><th>Signed Range</th><th>Unsigned Range</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>std::int8_t</code></td><td><code>std::uint8_t</code></td><td>1 byte</td><td>−128 to 127</td><td>0 to 255</td></tr>
+            <tr><td><code>std::int16_t</code></td><td><code>std::uint16_t</code></td><td>2 bytes</td><td>−32,768 to 32,767</td><td>0 to 65,535</td></tr>
+            <tr><td><code>std::int32_t</code></td><td><code>std::uint32_t</code></td><td>4 bytes</td><td>~−2.1B to ~2.1B</td><td>0 to ~4.29B</td></tr>
+            <tr><td><code>std::int64_t</code></td><td><code>std::uint64_t</code></td><td>8 bytes</td><td>~−9.2×10<sup>18</sup> to ~9.2×10<sup>18</sup></td><td>0 to ~1.8×10<sup>19</sup></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="box box-danger">
+        <div class="box-title"><div class="box-icon">!</div>Warning: 8-bit Fixed-Width Types Behave Like Chars!</div>
+        Most compilers alias <code>std::int8_t</code> to <code>signed char</code> and <code>std::uint8_t</code> to <code>unsigned char</code>.
+        They will <strong>print as characters</strong>, not numbers.<br><br>
+        <code>std::int8_t x { 65 }; std::cout &lt;&lt; x;</code> → prints <strong>A</strong>, not 65!<br><br>
+        Avoid 8-bit fixed-width types for numeric values. Use <code>static_cast&lt;int&gt;(x)</code> if you must print them as numbers.
+      </div>
+
+      <h3 id="sec-4-6-fast">Fast and Least Types</h3>
+      <div class="compare-grid">
+        <div class="compare-card">
+          <h4><code>std::int_fast#_t</code></h4>
+          <p style="font-size:14px;">The <strong>fastest</strong> type with at least # bits. The compiler chooses the most CPU-efficient native type.</p>
+        </div>
+        <div class="compare-card">
+          <h4><code>std::int_least#_t</code></h4>
+          <p style="font-size:14px;">The <strong>smallest</strong> type with at least # bits. Prioritises minimal memory usage.</p>
+        </div>
+      </div>
+
+      <div class="box box-practice">
+        <div class="box-title"><div class="box-icon">✓</div>Best Practice: Avoid Fast/Least Types</div>
+        Their sizes vary across platforms, defeating the purpose of predictable sizing. Use explicit fixed-width types (<code>std::int32_t</code>, etc.) or plain <code>int</code> instead.
+      </div>
+
+      <h3 id="sec-4-6-sizet"><code>std::size_t</code></h3>
+
+      <div class="box box-definition">
+        <div class="box-title"><div class="box-icon">D</div>std::size_t</div>
+        An <strong>implementation-defined unsigned integral type</strong> — the type returned by <code>sizeof</code>. Include <code>&lt;cstddef&gt;</code> to use it explicitly.
+        <ul style="margin-top:10px;margin-left:20px;">
+          <li>32-bit systems: typically <code>uint32_t</code></li>
+          <li>64-bit systems: typically <code>uint64_t</code></li>
+        </ul>
+        Its maximum value equals the <strong>maximum possible byte-size of a single object</strong> on that system. Widely used for array sizes, indices, and memory sizes.
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots">
+            <div class="code-dot dot-orange"></div>
+            <div class="code-dot dot-purple"></div>
+            <div class="code-dot dot-white"></div>
+          </div>
+          <span class="code-filename">sizet_demo.cpp</span>
+        </div>
+        <pre><code><span class="ct">#include</span> <span class="cs">&lt;iostream&gt;</span>
+<span class="ct">#include</span> <span class="cs">&lt;cstddef&gt;</span>   <span class="cc">// for std::size_t</span>
+
+<span class="ct">int</span> <span class="cf">main</span>() {
+    <span class="ct">std::size_t</span> <span class="ck">s</span> <span class="co">=</span> <span class="ck">sizeof</span>(<span class="ct">int</span>)<span class="co">;</span>  <span class="cc">// sizeof returns std::size_t</span>
+    <span class="co">std::cout &lt;&lt;</span> <span class="cs">"Size of int: "</span> <span class="co">&lt;&lt;</span> <span class="ck">s</span> <span class="co">&lt;&lt;</span> <span class="cs">'\n'</span><span class="co">;</span>
+    <span class="ck">return</span> <span class="cs">0</span><span class="co">;</span>
+}</code></pre>
+      </div>
+
+      <div class="summary-box">
+        <h4>🗝 Section 4.6 Summary</h4>
+        <ul>
+          <li>Fixed-width types (<code>std::int32_t</code>, etc.) from <code>&lt;cstdint&gt;</code> guarantee exact sizes on all platforms.</li>
+          <li>8-bit fixed-width types behave like <code>char</code> — they print as characters. Avoid for numeric use.</li>
+          <li>Fast/least types have variable sizes — avoid them for portability.</li>
+          <li><code>std::size_t</code> (from <code>&lt;cstddef&gt;</code>) is the unsigned type returned by <code>sizeof</code>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ═══════════════════════════════════ 4.7 ═══════════════════════════════════ -->
+    <section class="section" id="sec-4-7">
+      <div class="section-label">Section 4.7</div>
+      <h2>Introduction to Scientific Notation</h2>
+
+      <div class="box box-definition">
+        <div class="box-title"><div class="box-icon">D</div>Scientific Notation</div>
+        A shorthand for very large or very small numbers: <strong>significand × 10<sup>exponent</sup></strong>.
+        In C++, use the letter <code>e</code> or <code>E</code> for the exponent.
+        <div class="formula-display">1.2e4 = 1.2 × 10<sup>4</sup> = 12,000 &nbsp;|&nbsp; 5e-2 = 5 × 10<sup>−2</sup> = 0.05</div>
+      </div>
+
+      <h3 id="sec-4-7-sigfigs">Significant Digits (Significant Figures)</h3>
+
+      <div class="box box-note">
+        <div class="box-title"><div class="box-icon">ℹ</div>Rules for Counting Significant Digits</div>
+        <ul>
+          <li>All <strong>non-zero digits</strong> are always significant.</li>
+          <li><strong>Leading zeros</strong> are <strong>never</strong> significant (<code>0.0042</code> → 2 sig digits).</li>
+          <li><strong>Trailing zeros after a decimal point</strong> are <strong>significant</strong> (<code>8.700</code> → 4 sig digits).</li>
+          <li><strong>Trailing zeros with no decimal point</strong> are ambiguous / assumed insignificant (<code>2100</code> → 2 sig digits assumed).</li>
+        </ul>
+      </div>
+
+      <h3 id="sec-4-7-quiz">Section 4.7 — Quiz Solutions</h3>
+      <div class="quiz-section">
+        <div class="quiz-header">📝 Quiz — Scientific Notation &amp; Significant Digits</div>
+        <div class="quiz-body">
+          <div class="quiz-q">Q1: Convert to scientific notation and state the number of significant digits.</div>
+          <div class="quiz-a">
+            <div class="quiz-a-label">✅ Solutions</div>
+            <div class="table-wrap" style="margin:8px 0;">
+              <table>
+                <thead><tr><th>Original</th><th>Scientific Notation</th><th>Sig. Digits</th><th>Reasoning</th></tr></thead>
+                <tbody>
+                  <tr><td>34.50</td><td><code>3.450e1</code></td><td>4</td><td>Trailing zero after decimal is significant</td></tr>
+                  <tr><td>0.004000</td><td><code>4.000e-3</code></td><td>4</td><td>Leading zeros not significant; trailing zeros after decimal are</td></tr>
+                  <tr><td>123.005</td><td><code>1.23005e2</code></td><td>6</td><td>All digits including embedded zero count</td></tr>
+                  <tr><td>146000</td><td><code>1.46e5</code></td><td>3</td><td>Trailing zeros with no decimal are assumed insignificant</td></tr>
+                  <tr><td>146000.001</td><td><code>1.46000001e5</code></td><td>9</td><td>All digits in a number with a decimal point count</td></tr>
+                  <tr><td>0.0000000008</td><td><code>8e-10</code></td><td>1</td><td>Only the 8 is significant</td></tr>
+                  <tr><td>34500.0</td><td><code>3.45000e4</code></td><td>6</td><td>Decimal point present → all trailing zeros significant</td></tr>
+                  <tr><td>146000 (zeros significant)</td><td><code>1.46000e5</code></td><td>6</td><td>Explicitly stated as significant</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-box">
+        <h4>🗝 Section 4.7 Summary</h4>
+        <ul>
+          <li>Scientific notation: <code>significand × 10<sup>exponent</sup></code>, written in C++ as e.g. <code>1.5e3</code>.</li>
+          <li>Leading zeros are never significant. Trailing zeros after a decimal are always significant.</li>
+          <li>Trailing zeros in whole numbers without a decimal point are assumed insignificant.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ═══════════════════════════════════ 4.8 ═══════════════════════════════════ -->
+    <section class="section" id="sec-4-8">
+      <div class="section-label">Section 4.8</div>
+      <h2>Floating Point Numbers</h2>
+
+      <div class="box box-definition">
+        <div class="box-title"><div class="box-icon">D</div>Floating Point</div>
+        Data types that represent numbers with a <strong>fractional component</strong>. Called "floating point" because the decimal point can appear anywhere in the number. Floating-point types are <strong>always signed</strong>.
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Type</th><th>Size</th><th>Precision</th><th>Literal Suffix</th></tr></thead>
+          <tbody>
+            <tr><td><code>float</code></td><td>~4 bytes</td><td>6–9 significant digits</td><td><code>f</code> (e.g., <code>3.14f</code>)</td></tr>
+            <tr><td><code>double</code></td><td>~8 bytes</td><td>15–18 significant digits</td><td>none (default)</td></tr>
+            <tr><td><code>long double</code></td><td>8, 12, or 16 bytes</td><td>≥ 15 sig digits</td><td><code>L</code> (e.g., <code>3.14L</code>)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="box box-warning">
+        <div class="box-title"><div class="box-icon">⚠</div>Floating-Point Literals Need a Decimal Point</div>
+        <code>5</code> → integer (<code>int</code>) &nbsp;|&nbsp; <code>5.0</code> → <code>double</code> &nbsp;|&nbsp; <code>5.0f</code> → <code>float</code> &nbsp;|&nbsp; <code>5.0L</code> → <code>long double</code>
+      </div>
+
+      <h3 id="sec-4-8-precision">Precision, Output, and Rounding Errors</h3>
+
+      <div class="box box-note">
+        <div class="box-title"><div class="box-icon">ℹ</div>Why Can't 0.1 Be Stored Exactly?</div>
+        Computers store numbers in binary. Just as 1/3 cannot be exactly written in base 10, <code>0.1</code> (= 1/10) cannot be exactly expressed in binary. The closest approximation introduces tiny rounding errors that accumulate over calculations.
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots">
+            <div class="code-dot dot-orange"></div>
+            <div class="code-dot dot-purple"></div>
+            <div class="code-dot dot-white"></div>
+          </div>
+          <span class="code-filename">float_precision.cpp</span>
+        </div>
+        <pre><code><span class="ct">#include</span> <span class="cs">&lt;iostream&gt;</span>
+<span class="ct">#include</span> <span class="cs">&lt;iomanip&gt;</span>    <span class="cc">// for std::setprecision()</span>
+
+<span class="ct">int</span> <span class="cf">main</span>() {
+    <span class="ct">float</span>  <span class="ck">f</span> { <span class="cs">3.3333333333333333f</span> }<span class="co">;</span>
+    <span class="ct">double</span> <span class="ck">d</span> { <span class="cs">3.3333333333333333</span>  }<span class="co">;</span>
+
+    <span class="co">std::cout &lt;&lt;</span> <span class="co">std::setprecision(</span><span class="cs">17</span><span class="co">);</span>        <span class="cc">// show 17 significant digits</span>
+    <span class="co">std::cout &lt;&lt;</span> <span class="cs">"float:  "</span> <span class="co">&lt;&lt;</span> <span class="ck">f</span> <span class="co">&lt;&lt;</span> <span class="cs">'\n'</span><span class="co">;</span>   <span class="cc">// 3.3333332538604736 (inaccurate after ~7 digits)</span>
+    <span class="co">std::cout &lt;&lt;</span> <span class="cs">"double: "</span> <span class="co">&lt;&lt;</span> <span class="ck">d</span> <span class="co">&lt;&lt;</span> <span class="cs">'\n'</span><span class="co">;</span>   <span class="cc">// 3.3333333333333335 (accurate to ~16 digits)</span>
+    <span class="ck">return</span> <span class="cs">0</span><span class="co">;</span>
+}</code></pre>
+      </div>
+
+      <div class="box box-danger">
+        <div class="box-title"><div class="box-icon">!</div>Never Compare Floating-Point Numbers with ==</div>
+        Rounding errors mean two theoretically equal results may differ slightly.
+        <br><br>
+        <code>if (0.1 + 0.2 == 0.3)</code> may evaluate to <strong>false</strong>!
+        <br><br>
+        Use an epsilon (tolerance) comparison instead:<br>
+        <code>if (std::abs(result - expected) &lt; 1e-9)</code>
+        <br><br>
+        Also: <strong>never use floating-point for currency</strong> — use integer cents or a decimal library.
+      </div>
+
+      <div class="box box-practice">
+        <div class="box-title"><div class="box-icon">✓</div>Best Practices</div>
+        <ul>
+          <li>Prefer <code>double</code> over <code>float</code> — better precision, small cost.</li>
+          <li>Avoid <code>long double</code> — platform-dependent, rarely worth it.</li>
+          <li>Never compare floats with <code>==</code>.</li>
+          <li>Avoid division by <code>0.0</code> — produces <code>Inf</code> or <code>NaN</code>.</li>
+        </ul>
+      </div>
+
+      <h3 id="sec-4-8-special">Special Values: NaN and Inf</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Value</th><th>Produced by</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><code>Inf</code></td><td><code>1.0 / 0.0</code></td><td>Positive infinity</td></tr>
+            <tr><td><code>-Inf</code></td><td><code>-1.0 / 0.0</code></td><td>Negative infinity</td></tr>
+            <tr><td><code>NaN</code></td><td><code>0.0 / 0.0</code>, <code>sqrt(-1.0)</code></td><td>Not a Number — invalid arithmetic result</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="box box-warning">
+        <div class="box-title"><div class="box-icon">⚠</div>NaN Behaviour</div>
+        Operations with <code>NaN</code> propagate <code>NaN</code>. Even <code>NaN == NaN</code> is <strong>false</strong>! Use <code>std::isnan()</code> and <code>std::isinf()</code> from <code>&lt;cmath&gt;</code> to check for them.
+      </div>
+
+      <div class="summary-box">
+        <h4>🗝 Section 4.8 Summary</h4>
+        <ul>
+          <li>Floating-point types represent fractional numbers. Always signed. Default literal type is <code>double</code>.</li>
+          <li>Use <code>f</code> suffix for <code>float</code> literals; no suffix for <code>double</code>.</li>
+          <li>Limited precision causes rounding errors — 0.1 is not exactly representable in binary.</li>
+          <li>Never use <code>==</code> to compare floats; never use for currency; avoid division by <code>0.0</code>.</li>
+          <li>IEEE 754 special values: <code>Inf</code>, <code>-Inf</code>, <code>NaN</code>.</li>
+          <li>Prefer <code>double</code> over <code>float</code>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ═══════════════════════════════════ 4.9 ═══════════════════════════════════ -->
+    <section class="section" id="sec-4-9">
+      <div class="section-label">Section 4.9</div>
+      <h2>Boolean Values</h2>
+
+      <div class="box box-definition">
+        <div class="box-title"><div class="box-icon">D</div>bool</div>
+        Holds exactly two logical values: <code>true</code> (stored as <code>1</code>) or <code>false</code> (stored as <code>0</code>). An integral type, typically 1 byte in size despite only needing 1 bit logically.
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots">
+            <div class="code-dot dot-orange"></div>
+            <div class="code-dot dot-purple"></div>
+            <div class="code-dot dot-white"></div>
+          </div>
+          <span class="code-filename">bool_demo.cpp</span>
+        </div>
+        <pre><code><span class="ct">#include</span> <span class="cs">&lt;iostream&gt;</span>
+
+<span class="ct">int</span> <span class="cf">main</span>() {
+    <span class="ct">bool</span> <span class="ck">b1</span> { <span class="ck">true</span>  }<span class="co">;</span>
+    <span class="ct">bool</span> <span class="ck">b2</span> { <span class="ck">false</span> }<span class="co">;</span>
+
+    <span class="cc">// Default output: 1 (true) or 0 (false)</span>
+    <span class="co">std::cout &lt;&lt;</span> <span class="ck">b1</span> <span class="co">&lt;&lt;</span> <span class="cs">'\n'</span><span class="co">;</span>  <span class="cc">// prints: 1</span>
+    <span class="co">std::cout &lt;&lt;</span> <span class="ck">b2</span> <span class="co">&lt;&lt;</span> <span class="cs">'\n'</span><span class="co">;</span>  <span class="cc">// prints: 0</span>
+
+    <span class="cc">// Use std::boolalpha to print "true" / "false"</span>
+    <span class="co">std::cout &lt;&lt; std::boolalpha;</span>
+    <span class="co">std::cout &lt;&lt;</span> <span class="ck">b1</span> <span class="co">&lt;&lt;</span> <span class="cs">'\n'</span><span class="co">;</span>  <span class="cc">// prints: true</span>
+    <span class="co">std::cout &lt;&lt;</span> <span class="ck">b2</span> <span class="co">&lt;&lt;</span> <span class="cs">'\n'</span><span class="co">;</span>  <span class="cc">// prints: false</span>
+
+    <span class="co">std::cout &lt;&lt; std::noboolalpha;</span>  <span class="cc">// revert to 0/1 output</span>
+    <span class="ck">return</span> <span class="cs">0</span><span class="co">;</span>
+}</code></pre>
+      </div>
+
+      <h3 id="sec-4-9-io">Boolean Input &amp; Output</h3>
+      <div class="compare-grid">
+        <div class="compare-card">
+          <h4>Output (std::cout)</h4>
+          <ul>
+            <li>Default: prints <code>1</code> or <code>0</code></li>
+            <li><code>std::boolalpha</code> → prints "true" / "false"</li>
+            <li><code>std::noboolalpha</code> → reverts to numeric</li>
+          </ul>
+        </div>
+        <div class="compare-card">
+          <h4>Input (std::cin)</h4>
+          <ul>
+            <li>Default: expects <code>0</code> or <code>1</code></li>
+            <li><code>std::cin &gt;&gt; std::boolalpha</code> → accepts "true"/"false" (lowercase only)</li>
+            <li>Non-numeric input causes <code>cin</code> to silently fail</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="box box-formula">
+        <div class="box-title"><div class="box-icon">F</div>Integer → Boolean Conversion Rule</div>
+        <ul>
+          <li><code>0</code> → <code>false</code></li>
+          <li>Any <strong>non-zero integer</strong> (including negatives) → <code>true</code></li>
+        </ul>
+        So <code>if (x)</code> is equivalent to <code>if (x != 0)</code>.
+      </div>
+
+      <div class="summary-box">
+        <h4>🗝 Section 4.9 Summary</h4>
+        <ul>
+          <li><code>bool</code> holds <code>true</code> (= 1) or <code>false</code> (= 0).</li>
+          <li><code>cout</code> prints 0/1 by default; <code>std::boolalpha</code> enables "true"/"false".</li>
+          <li><code>cin</code> expects 0/1 by default; non-numeric input causes silent failure.</li>
+          <li>0 → false; any non-zero integer → true.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ═══════════════════════════════════ 4.10 ══════════════════════════════════ -->
+    <section class="section" id="sec-4-10">
+      <div class="section-label">Section 4.10</div>
+      <h2>Introduction to <code>if</code> Statements</h2>
+
+      <p>An <code>if</code> statement allows a program to execute code <strong>conditionally</strong> — only when a specified condition is true.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots">
+            <div class="code-dot dot-orange"></div>
+            <div class="code-dot dot-purple"></div>
+            <div class="code-dot dot-white"></div>
+          </div>
+          <span class="code-filename">if_syntax.cpp</span>
+        </div>
+        <pre><code><span class="cc">// Basic if / else if / else structure</span>
+<span class="ck">if</span> <span class="co">(</span><span class="ck">condition1</span><span class="co">) {</span>
+    <span class="cc">// Executes only if condition1 is true</span>
+<span class="co">}</span>
+<span class="ck">else if</span> <span class="co">(</span><span class="ck">condition2</span><span class="co">) {</span>
+    <span class="cc">// Executes only if condition1 was false AND condition2 is true</span>
+<span class="co">}</span>
+<span class="ck">else</span> <span class="co">{</span>
+    <span class="cc">// Executes if ALL prior conditions were false</span>
+<span class="co">}</span></code></pre>
+      </div>
+
+      <div class="box box-note">
+        <div class="box-title"><div class="box-icon">ℹ</div>Non-Boolean Conditions</div>
+        Any expression is implicitly converted to <code>bool</code> for evaluation.
+        <code>if (x)</code> means "if x is non-zero". <code>if (ptr)</code> means "if the pointer is non-null".
+      </div>
+
+      <h3>Early Returns</h3>
+
+      <div class="box box-definition">
+        <div class="box-title"><div class="box-icon">D</div>Early Return</div>
+        A <code>return</code> statement that appears <em>before</em> the last line of a function. When reached, it <strong>immediately stops the function</strong> and returns control (and optionally a value) to the caller.
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots">
+            <div class="code-dot dot-orange"></div>
+            <div class="code-dot dot-purple"></div>
+            <div class="code-dot dot-white"></div>
+          </div>
+          <span class="code-filename">early_return.cpp</span>
+        </div>
+        <pre><code><span class="ct">int</span> <span class="cf">absoluteValue</span>(<span class="ct">int</span> <span class="ck">x</span>) {
+    <span class="ck">if</span> (<span class="ck">x</span> <span class="co">&lt;</span> <span class="cs">0</span>)
+        <span class="ck">return</span> <span class="co">-</span><span class="ck">x</span><span class="co">;</span>   <span class="cc">// Early return: exits immediately with -x</span>
+
+    <span class="ck">return</span> <span class="ck">x</span><span class="co">;</span>       <span class="cc">// Only reached if x >= 0</span>
+}</code></pre>
+      </div>
+
+      <h3 id="sec-4-10-quiz">Section 4.10 — Quiz Solutions</h3>
+      <div class="quiz-section">
+        <div class="quiz-header">📝 Quiz — if Statements &amp; Early Returns</div>
+        <div class="quiz-body">
+
+          <div class="quiz-q">Q1: What is an early return, and what is its behaviour?</div>
+          <div class="quiz-a">
+            <div class="quiz-a-label">✅ Solution</div>
+            An <strong>early return</strong> is a <code>return</code> statement before the last line of a function. When executed, the function <strong>immediately stops</strong> and control returns to the caller. Any remaining code in the function is skipped. If the function has a non-void return type, the specified value is returned to the caller.
+          </div>
+
+          <div class="quiz-q">Q2: Write a program that asks the user for a digit 0–9, then prints whether it is prime (2, 3, 5, or 7).</div>
+          <div class="quiz-a"><div class="quiz-a-label">✅ Solution</div></div>
+
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot dot-orange"></div>
+                <div class="code-dot dot-purple"></div>
+                <div class="code-dot dot-white"></div>
+              </div>
+              <span class="code-filename">prime_digit.cpp</span>
+            </div>
+            <pre><code><span class="ct">#include</span> <span class="cs">&lt;iostream&gt;</span>
+
+<span class="ct">bool</span> <span class="cf">isPrime</span>(<span class="ct">int</span> <span class="ck">x</span>) {
+    <span class="ck">if</span> (<span class="ck">x</span> <span class="co">==</span> <span class="cs">2</span> <span class="co">||</span> <span class="ck">x</span> <span class="co">==</span> <span class="cs">3</span> <span class="co">||</span> <span class="ck">x</span> <span class="co">==</span> <span class="cs">5</span> <span class="co">||</span> <span class="ck">x</span> <span class="co">==</span> <span class="cs">7</span>)
+        <span class="ck">return</span> <span class="ck">true</span><span class="co">;</span>
+    <span class="ck">return</span> <span class="ck">false</span><span class="co">;</span>
+}
+
+<span class="ct">int</span> <span class="cf">main</span>() {
+    <span class="co">std::cout &lt;&lt;</span> <span class="cs">"Enter a number 0 through 9: "</span><span class="co">;</span>
+    <span class="ct">int</span> <span class="ck">x</span>{}<span class="co">;</span>
+    <span class="co">std::cin &gt;&gt;</span> <span class="ck">x</span><span class="co">;</span>
+
+    <span class="ck">if</span> (<span class="cf">isPrime</span>(<span class="ck">x</span>))
+        <span class="co">std::cout &lt;&lt;</span> <span class="cs">"The digit is prime\n"</span><span class="co">;</span>
+    <span class="ck">else</span>
+        <span class="co">std::cout &lt;&lt;</span> <span class="cs">"The digit is not prime\n"</span><span class="co">;</span>
+
+    <span class="ck">return</span> <span class="cs">0</span><span class="co">;</span>
+}</code></pre>
+          </div>
+
+          <div class="quiz-q">Q3: How can this code be shortened?<br><br>
+            <code>if (height &gt;= 140.0) return true; else return false;</code>
+          </div>
+          <div class="quiz-a">
+            <div class="quiz-a-label">✅ Solution</div>
+            The condition <code>height &gt;= 140.0</code> already produces a <code>bool</code>. Return it directly:
+          </div>
+
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot dot-orange"></div>
+                <div class="code-dot dot-purple"></div>
+                <div class="code-dot dot-white"></div>
+              </div>
+              <span class="code-filename">simplified_return.cpp</span>
+            </div>
+            <pre><code><span class="ck">return</span> <span class="ck">height</span> <span class="co">&gt;=</span> <span class="cs">140.0</span><span class="co">;</span>  <span class="cc">// Directly returns the bool result of the comparison</span></code></pre>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="summary-box">
+        <h4>🗝 Section 4.10 Summary</h4>
+        <ul>
+          <li><code>if</code> / <code>else if</code> / <code>else</code> enables conditional execution. Conditions auto-convert to <code>bool</code>.</li>
+          <li>0 = false; non-zero = true.</li>
+          <li>An <strong>early return</strong> immediately exits the function.</li>
+          <li>If a condition itself evaluates to <code>bool</code>, return it directly instead of wrapping in if/else.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ═══════════════════════════════════ 4.11 ══════════════════════════════════ -->
+    <section class="section" id="sec-4-11">
+      <div class="section-label">Section 4.11</div>
+      <h2>Chars</h2>
+
+      <div class="box box-definition">
+        <div class="box-title"><div class="box-icon">D</div>char</div>
+        A 1-byte integral type that holds a single character — a letter, digit, symbol, whitespace, or control character. Internally, <code>char</code> stores an <strong>integer</strong> that maps to a character via the ASCII encoding table.
+      </div>
+
+      <h3>ASCII Encoding</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ASCII Code</th><th>Character</th><th>ASCII Code</th><th>Character</th></tr></thead>
+          <tbody>
+            <tr><td>32</td><td>Space</td><td>65</td><td>A</td></tr>
+            <tr><td>48</td><td>'0'</td><td>97</td><td>a</td></tr>
+            <tr><td>57</td><td>'9'</td><td>122</td><td>z</td></tr>
+            <tr><td>10</td><td>Newline (\n)</td><td>9</td><td>Tab (\t)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="compare-grid">
+        <div class="compare-card">
+          <h4>✅ Correct — Single Quotes for Chars</h4>
+          <code>'a'</code>, <code>'1'</code>, <code>'!'</code>, <code>'\n'</code><br>
+          <p style="font-size:13px;margin-top:8px;">These are <code>char</code> literals.</p>
+        </div>
+        <div class="compare-card">
+          <h4>❌ Wrong — Double Quotes for Single Chars</h4>
+          <code>"a"</code> is a <strong>string literal</strong> (<code>const char*</code>), not a <code>char</code>.
+        </div>
+      </div>
+
+      <div class="box box-note">
+        <div class="box-title"><div class="box-icon">ℹ</div>std::cin and Whitespace</div>
+        <code>std::cin &gt;&gt; ch</code> extracts one character but <strong>skips leading whitespace</strong>.<br>
+        Use <code>std::cin.get(ch)</code> to capture the very next character, including spaces and newlines.
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots">
+            <div class="code-dot dot-orange"></div>
+            <div class="code-dot dot-purple"></div>
+            <div class="code-dot dot-white"></div>
+          </div>
+          <span class="code-filename">char_demo.cpp</span>
+        </div>
+        <pre><code><span class="ct">#include</span> <span class="cs">&lt;iostream&gt;</span>
+
+<span class="ct">int</span> <span class="cf">main</span>() {
+    <span class="ct">char</span> <span class="ck">c1</span> { <span class="cs">'a'</span> }<span class="co">;</span>   <span class="cc">// stores integer 97 internally</span>
+    <span class="ct">char</span> <span class="ck">c2</span> { <span class="cs">97</span>  }<span class="co">;</span>   <span class="cc">// identical — also stores 97</span>
+
+    <span class="co">std::cout &lt;&lt;</span> <span class="ck">c1</span> <span class="co">&lt;&lt;</span> <span class="cs">'\n'</span><span class="co">;</span>                         <span class="cc">// prints: a</span>
+    <span class="co">std::cout &lt;&lt;</span> <span class="ck">c2</span> <span class="co">&lt;&lt;</span> <span class="cs">'\n'</span><span class="co">;</span>                         <span class="cc">// prints: a</span>
+    <span class="co">std::cout &lt;&lt; static_cast&lt;</span><span class="ct">int</span><span class="co">&gt;(</span><span class="ck">c1</span><span class="co">) &lt;&lt;</span> <span class="cs">'\n'</span><span class="co">;</span>       <span class="cc">// prints: 97</span>
+
+    <span class="cc">// Escape sequences in action</span>
+    <span class="co">std::cout &lt;&lt;</span> <span class="cs">"Line 1\nLine 2\n"</span><span class="co">;</span>
+    <span class="co">std::cout &lt;&lt;</span> <span class="cs">"Col1\tCol2\n"</span><span class="co">;</span>
+    <span class="co">std::cout &lt;&lt;</span> <span class="cs">"She said \"hello\"\n"</span><span class="co">;</span>
+    <span class="ck">return</span> <span class="cs">0</span><span class="co">;</span>
+}</code></pre>
+      </div>
+
+      <h3 id="sec-4-11-escape">Escape Sequences</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Escape Sequence</th><th>Character</th><th>ASCII Code</th></tr></thead>
+          <tbody>
+            <tr><td><code>\n</code></td><td>Newline</td><td>10</td></tr>
+            <tr><td><code>\t</code></td><td>Horizontal tab</td><td>9</td></tr>
+            <tr><td><code>\r</code></td><td>Carriage return</td><td>13</td></tr>
+            <tr><td><code>\\</code></td><td>Backslash</td><td>92</td></tr>
+            <tr><td><code>\'</code></td><td>Single quote</td><td>39</td></tr>
+            <tr><td><code>\"</code></td><td>Double quote</td><td>34</td></tr>
+            <tr><td><code>\0</code></td><td>Null character (string terminator)</td><td>0</td></tr>
+            <tr><td><code>\a</code></td><td>Alert/Bell</td><td>7</td></tr>
+            <tr><td><code>\b</code></td><td>Backspace</td><td>8</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="box box-danger">
+        <div class="box-title"><div class="box-icon">!</div>Common Mistakes</div>
+        <ul>
+          <li><strong>Wrong slash direction:</strong> <code>'/n'</code> is a multicharacter literal (wrong!). <code>'\n'</code> is the newline escape (correct!).</li>
+          <li><strong>Multicharacter literals:</strong> <code>'56'</code> or <code>'ab'</code> compile but produce unexpected integers. Avoid entirely.</li>
+          <li><strong>Double quotes for chars:</strong> <code>"a"</code> is a string, not a char. Always use <code>'a'</code>.</li>
+        </ul>
+      </div>
+
+      <div class="summary-box">
+        <h4>🗝 Section 4.11 Summary</h4>
+        <ul>
+          <li><code>char</code>: 1-byte integral type storing a character via its ASCII integer code.</li>
+          <li>Always use <strong>single quotes</strong> for char literals. Double quotes = string literal.</li>
+          <li><code>std::cin &gt;&gt; ch</code> skips leading whitespace. <code>std::cin.get(ch)</code> captures any character.</li>
+          <li>Escape sequences begin with <code>\</code>. Key ones: <code>\n</code>, <code>\t</code>, <code>\\</code>, <code>\'</code>, <code>\"</code>.</li>
+          <li>Avoid multicharacter literals and wrong-direction slashes.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ═══════════════════════════════════ 4.12 ══════════════════════════════════ -->
+    <section class="section" id="sec-4-12">
+      <div class="section-label">Section 4.12</div>
+      <h2>Introduction to Type Conversion and <code>static_cast</code></h2>
+
+      <h3>Implicit Type Conversion</h3>
+      <div class="box box-definition">
+        <div class="box-title"><div class="box-icon">D</div>Implicit Conversion</div>
+        When the compiler <strong>automatically</strong> converts a value from one type to another without explicit instruction. Also called <em>coercion</em>. Occurs when passing mismatched types to functions, assigning between types, or mixing types in expressions.
+      </div>
+
+      <div class="box box-warning">
+        <div class="box-title"><div class="box-icon">⚠</div>Narrowing Conversions — Data Loss!</div>
+        Converting from a more-precise type to a less-precise one (narrowing) can lose data.<br><br>
+        <code>double</code> → <code>int</code>: fraction dropped. Compiler will <strong>warn</strong>.<br>
+        Brace initialization blocks narrowing: <code>int x { 5.5 };</code> is a <strong>compile error</strong> — use this as a safety feature.
+      </div>
+
+      <h3>Explicit Conversion: <code>static_cast</code></h3>
+
+      <div class="box box-definition">
+        <div class="box-title"><div class="box-icon">D</div>static_cast</div>
+        Tells the compiler to explicitly convert a value to a specified type. Checked at compile time. Silences warnings because you are explicitly acknowledging the conversion.
+        <div class="formula-display" style="font-size:0.95rem;padding:14px;">
+          static_cast&lt;<em>new_type</em>&gt;(<em>expression</em>)
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots">
+            <div class="code-dot dot-orange"></div>
+            <div class="code-dot dot-purple"></div>
+            <div class="code-dot dot-white"></div>
+          </div>
+          <span class="code-filename">static_cast_demo.cpp</span>
+        </div>
+        <pre><code><span class="ct">#include</span> <span class="cs">&lt;iostream&gt;</span>
+
+<span class="ct">int</span> <span class="cf">main</span>() {
+    <span class="cc">// double -> int: intentionally drop fraction</span>
+    <span class="ct">double</span> <span class="ck">d</span> { <span class="cs">3.7</span> }<span class="co">;</span>
+    <span class="ct">int</span>    <span class="ck">i</span> { <span class="co">static_cast&lt;</span><span class="ct">int</span><span class="co">&gt;(</span><span class="ck">d</span><span class="co">) };</span>     <span class="cc">// i = 3 (fraction dropped)</span>
+    <span class="co">std::cout &lt;&lt;</span> <span class="ck">i</span> <span class="co">&lt;&lt;</span> <span class="cs">'\n'</span><span class="co">;</span>
+
+    <span class="cc">// char -> int: print ASCII code of a character</span>
+    <span class="ct">char</span> <span class="ck">ch</span> { <span class="cs">'a'</span> }<span class="co">;</span>
+    <span class="co">std::cout &lt;&lt; static_cast&lt;</span><span class="ct">int</span><span class="co">&gt;(</span><span class="ck">ch</span><span class="co">) &lt;&lt;</span> <span class="cs">'\n'</span><span class="co">;</span>   <span class="cc">// prints: 97</span>
+
+    <span class="cc">// int -> double: force floating-point division</span>
+    <span class="ct">int</span> <span class="ck">x</span> { <span class="cs">7</span> }<span class="co">,</span> <span class="ck">y</span> { <span class="cs">2</span> }<span class="co">;</span>
+    <span class="ct">double</span> <span class="ck">result</span> { <span class="co">static_cast&lt;</span><span class="ct">double</span><span class="co">&gt;(</span><span class="ck">x</span><span class="co">) /</span> <span class="ck">y</span> }<span class="co">;</span>  <span class="cc">// 7.0 / 2 = 3.5</span>
+    <span class="co">std::cout &lt;&lt;</span> <span class="ck">result</span> <span class="co">&lt;&lt;</span> <span class="cs">'\n'</span><span class="co">;</span>               <span class="cc">// prints: 3.5</span>
+
+    <span class="ck">return</span> <span class="cs">0</span><span class="co">;</span>
+}</code></pre>
+      </div>
+
+      <h3>Sign Conversions</h3>
+      <div class="box box-note">
+        <div class="box-title"><div class="box-icon">ℹ</div>Signed ↔ Unsigned Conversions</div>
+        Safe when the value is within range of the destination type. If out of range (C++20):
+        <ul style="margin-top:8px;margin-left:20px;">
+          <li>Signed → Unsigned out-of-range: modulo wrapping (defined in C++20).</li>
+          <li>Unsigned → Signed out-of-range: implementation-defined. Be careful.</li>
+        </ul>
+      </div>
+
+      <h3 id="sec-4-12-quiz">Section 4.12 — Quiz Solutions</h3>
+      <div class="quiz-section">
+        <div class="quiz-header">📝 Quiz — Type Conversion &amp; static_cast</div>
+        <div class="quiz-body">
+
+          <div class="quiz-q">Q1: Write a program where the user enters a character. Print it and its ASCII code using <code>static_cast</code>.</div>
+          <div class="quiz-a"><div class="quiz-a-label">✅ Solution</div></div>
+
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot dot-orange"></div>
+                <div class="code-dot dot-purple"></div>
+                <div class="code-dot dot-white"></div>
+              </div>
+              <span class="code-filename">char_ascii_explicit.cpp</span>
+            </div>
+            <pre><code><span class="ct">#include</span> <span class="cs">&lt;iostream&gt;</span>
+
+<span class="ct">int</span> <span class="cf">main</span>() {
+    <span class="co">std::cout &lt;&lt;</span> <span class="cs">"Enter a single character: "</span><span class="co">;</span>
+    <span class="ct">char</span> <span class="ck">c</span>{}<span class="co">;</span>
+    <span class="co">std::cin &gt;&gt;</span> <span class="ck">c</span><span class="co">;</span>
+
+    <span class="co">std::cout &lt;&lt;</span> <span class="cs">"You entered '"</span>
+              <span class="co">&lt;&lt;</span> <span class="ck">c</span>
+              <span class="co">&lt;&lt;</span> <span class="cs">"', which has ASCII code "</span>
+              <span class="co">&lt;&lt; static_cast&lt;</span><span class="ct">int</span><span class="co">&gt;(</span><span class="ck">c</span><span class="co">) &lt;&lt;</span> <span class="cs">".\n"</span><span class="co">;</span>
+    <span class="ck">return</span> <span class="cs">0</span><span class="co">;</span>
+}</code></pre>
+          </div>
+
+          <div class="quiz-q">Q2: Rewrite using implicit type conversion instead of <code>static_cast</code>.</div>
+          <div class="quiz-a"><div class="quiz-a-label">✅ Solution</div></div>
+
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot dot-orange"></div>
+                <div class="code-dot dot-purple"></div>
+                <div class="code-dot dot-white"></div>
+              </div>
+              <span class="code-filename">char_ascii_implicit.cpp</span>
+            </div>
+            <pre><code><span class="ct">#include</span> <span class="cs">&lt;iostream&gt;</span>
+
+<span class="ct">int</span> <span class="cf">main</span>() {
+    <span class="co">std::cout &lt;&lt;</span> <span class="cs">"Enter a single character: "</span><span class="co">;</span>
+    <span class="ct">char</span> <span class="ck">c</span>{}<span class="co">;</span>
+    <span class="co">std::cin &gt;&gt;</span> <span class="ck">c</span><span class="co">;</span>
+
+    <span class="cc">// Implicit conversion: assigning char to an int variable</span>
+    <span class="ct">int</span> <span class="ck">ascii</span>{ <span class="ck">c</span> }<span class="co">;</span>   <span class="cc">// 'a' -> 97, implicitly converted</span>
+
+    <span class="co">std::cout &lt;&lt;</span> <span class="cs">"You entered '"</span>
+              <span class="co">&lt;&lt;</span> <span class="ck">c</span>
+              <span class="co">&lt;&lt;</span> <span class="cs">"', which has ASCII code "</span>
+              <span class="co">&lt;&lt;</span> <span class="ck">ascii</span> <span class="co">&lt;&lt;</span> <span class="cs">".\n"</span><span class="co">;</span>
+    <span class="ck">return</span> <span class="cs">0</span><span class="co">;</span>
+}</code></pre>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="summary-box">
+        <h4>🗝 Section 4.12 Summary</h4>
+        <ul>
+          <li><strong>Implicit conversion</strong>: automatic. Widening is safe; narrowing may lose data and generates warnings.</li>
+          <li>Brace initialisation blocks narrowing conversions at compile time — use it for safety.</li>
+          <li><strong><code>static_cast&lt;T&gt;(expr)</code></strong>: explicit, compile-time-checked conversion. Preferred for intentional conversions.</li>
+          <li>Use <code>static_cast&lt;int&gt;</code> on a <code>char</code> to get its ASCII value.</li>
+          <li>Use <code>static_cast&lt;double&gt;</code> on an <code>int</code> to force floating-point division.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ═══════════════════════════════════ 4.x ═══════════════════════════════════ -->
+    <section class="section" id="sec-4-x">
+      <div class="section-label">Section 4.x</div>
+      <h2>Chapter 4 — Final Quiz Solutions</h2>
+
+      <div class="quiz-section">
+        <div class="quiz-header">📝 Final Chapter Quiz</div>
+        <div class="quiz-body">
+
+          <div class="quiz-q">Q1: Pick the appropriate data type for each situation.</div>
+          <div class="quiz-a">
+            <div class="quiz-a-label">✅ Solutions</div>
+            <div class="table-wrap" style="margin:10px 0;">
+              <table>
+                <thead><tr><th>Situation</th><th>Best Type</th><th>Reasoning</th></tr></thead>
+                <tbody>
+                  <tr><td>Age of the user (size not important)</td><td><code>int</code></td><td>Small positive whole number; <code>int</code> is the default choice</td></tr>
+                  <tr><td>Whether user wants to check for updates</td><td><code>bool</code></td><td>Binary yes/no decision</td></tr>
+                  <tr><td>pi (3.14159265)</td><td><code>double</code></td><td>Needs high precision; double's 15–18 sig digits is appropriate</td></tr>
+                  <tr><td>Number of pages in a textbook</td><td><code>int</code></td><td>Small positive whole number</td></tr>
+                  <tr><td>Length of a couch in feet to 2 decimal places (size important)</td><td><code>float</code></td><td>Only 2 dp needed; float's ~7 sig digits is enough; saves 4 bytes vs double</td></tr>
+                  <tr><td>How many times you've blinked since birth (millions)</td><td><code>int</code></td><td>Millions fit in int's ~2.1 billion max</td></tr>
+                  <tr><td>User selecting option from menu by letter</td><td><code>char</code></td><td>A single character selection</td></tr>
+                  <tr><td>Year someone was born (size important)</td><td><code>std::int16_t</code></td><td>Guaranteed 2 bytes; holds up to 32,767 — covers all reasonable years</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="quiz-q">Q2: Write a calculator program. The user enters 2 doubles and an operator (+, -, *, /). Print the result. If the operator is invalid, print nothing.</div>
+          <div class="quiz-a"><div class="quiz-a-label">✅ Solution</div></div>
+
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot dot-orange"></div>
+                <div class="code-dot dot-purple"></div>
+                <div class="code-dot dot-white"></div>
+              </div>
+              <span class="code-filename">calculator.cpp</span>
+            </div>
+            <pre><code><span class="ct">#include</span> <span class="cs">&lt;iostream&gt;</span>
+
+<span class="ct">double</span> <span class="cf">getDouble</span>() {
+    <span class="co">std::cout &lt;&lt;</span> <span class="cs">"Enter a double value: "</span><span class="co">;</span>
+    <span class="ct">double</span> <span class="ck">val</span>{}<span class="co">;</span>
+    <span class="co">std::cin &gt;&gt;</span> <span class="ck">val</span><span class="co">;</span>
+    <span class="ck">return</span> <span class="ck">val</span><span class="co">;</span>
+}
+
+<span class="ct">char</span> <span class="cf">getOperator</span>() {
+    <span class="co">std::cout &lt;&lt;</span> <span class="cs">"Enter +, -, *, or /: "</span><span class="co">;</span>
+    <span class="ct">char</span> <span class="ck">op</span>{}<span class="co">;</span>
+    <span class="co">std::cin &gt;&gt;</span> <span class="ck">op</span><span class="co">;</span>
+    <span class="ck">return</span> <span class="ck">op</span><span class="co">;</span>
+}
+
+<span class="ct">void</span> <span class="cf">printResult</span>(<span class="ct">double</span> <span class="ck">x</span><span class="co">,</span> <span class="ct">double</span> <span class="ck">y</span><span class="co">,</span> <span class="ct">char</span> <span class="ck">op</span>) {
+    <span class="ck">if</span>      (<span class="ck">op</span> <span class="co">==</span> <span class="cs">'+'</span>) <span class="co">std::cout &lt;&lt;</span> <span class="ck">x</span> <span class="co">&lt;&lt;</span> <span class="cs">" + "</span> <span class="co">&lt;&lt;</span> <span class="ck">y</span> <span class="co">&lt;&lt;</span> <span class="cs">" is "</span> <span class="co">&lt;&lt; (</span><span class="ck">x</span> <span class="co">+</span> <span class="ck">y</span><span class="co">) &lt;&lt;</span> <span class="cs">'\n'</span><span class="co">;</span>
+    <span class="ck">else if</span> (<span class="ck">op</span> <span class="co">==</span> <span class="cs">'-'</span>) <span class="co">std::cout &lt;&lt;</span> <span class="ck">x</span> <span class="co">&lt;&lt;</span> <span class="cs">" - "</span> <span class="co">&lt;&lt;</span> <span class="ck">y</span> <span class="co">&lt;&lt;</span> <span class="cs">" is "</span> <span class="co">&lt;&lt; (</span><span class="ck">x</span> <span class="co">-</span> <span class="ck">y</span><span class="co">) &lt;&lt;</span> <span class="cs">'\n'</span><span class="co">;</span>
+    <span class="ck">else if</span> (<span class="ck">op</span> <span class="co">==</span> <span class="cs">'*'</span>) <span class="co">std::cout &lt;&lt;</span> <span class="ck">x</span> <span class="co">&lt;&lt;</span> <span class="cs">" * "</span> <span class="co">&lt;&lt;</span> <span class="ck">y</span> <span class="co">&lt;&lt;</span> <span class="cs">" is "</span> <span class="co">&lt;&lt; (</span><span class="ck">x</span> <span class="co">*</span> <span class="ck">y</span><span class="co">) &lt;&lt;</span> <span class="cs">'\n'</span><span class="co">;</span>
+    <span class="ck">else if</span> (<span class="ck">op</span> <span class="co">==</span> <span class="cs">'/'</span>) <span class="co">std::cout &lt;&lt;</span> <span class="ck">x</span> <span class="co">&lt;&lt;</span> <span class="cs">" / "</span> <span class="co">&lt;&lt;</span> <span class="ck">y</span> <span class="co">&lt;&lt;</span> <span class="cs">" is "</span> <span class="co">&lt;&lt; (</span><span class="ck">x</span> <span class="co">/</span> <span class="ck">y</span><span class="co">) &lt;&lt;</span> <span class="cs">'\n'</span><span class="co">;</span>
+    <span class="cc">// Invalid operator: print nothing (no else clause)</span>
+}
+
+<span class="ct">int</span> <span class="cf">main</span>() {
+    <span class="ct">double</span> <span class="ck">x</span>{ <span class="cf">getDouble</span>() }<span class="co">;</span>
+    <span class="ct">double</span> <span class="ck">y</span>{ <span class="cf">getDouble</span>() }<span class="co">;</span>
+    <span class="ct">char</span>   <span class="ck">op</span>{ <span class="cf">getOperator</span>() }<span class="co">;</span>
+    <span class="cf">printResult</span>(<span class="ck">x</span><span class="co">,</span> <span class="ck">y</span><span class="co">,</span> <span class="ck">op</span>)<span class="co">;</span>
+    <span class="ck">return</span> <span class="cs">0</span><span class="co">;</span>
+}</code></pre>
+          </div>
+
+          <div class="quiz-q">Q3: Simulate a ball dropped from a tower. Ask for height, then print ball position at 0–5 seconds. Formula: distance_fallen = 9.8 × t² / 2. Stop if height ≤ 0.</div>
+          <div class="quiz-a"><div class="quiz-a-label">✅ Solution</div></div>
+
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="code-dot dot-orange"></div>
+                <div class="code-dot dot-purple"></div>
+                <div class="code-dot dot-white"></div>
+              </div>
+              <span class="code-filename">falling_ball.cpp</span>
+            </div>
+            <pre><code><span class="ct">#include</span> <span class="cs">&lt;iostream&gt;</span>
+
+<span class="ct">double</span> <span class="cf">getTowerHeight</span>() {
+    <span class="co">std::cout &lt;&lt;</span> <span class="cs">"Enter the height of the tower in meters: "</span><span class="co">;</span>
+    <span class="ct">double</span> <span class="ck">height</span>{}<span class="co">;</span>
+    <span class="co">std::cin &gt;&gt;</span> <span class="ck">height</span><span class="co">;</span>
+    <span class="ck">return</span> <span class="ck">height</span><span class="co">;</span>
+}
+
+<span class="cc">// Kinematic formula: height = initial_height - (g * t^2 / 2)</span>
+<span class="ct">double</span> <span class="cf">calculateHeight</span>(<span class="ct">double</span> <span class="ck">towerHeight</span><span class="co">,</span> <span class="ct">int</span> <span class="ck">seconds</span>) {
+    <span class="ck">constexpr</span> <span class="ct">double</span> <span class="ck">gravity</span> { <span class="cs">9.8</span> }<span class="co">;</span>
+    <span class="ct">double</span> <span class="ck">fallen</span> { <span class="ck">gravity</span> <span class="co">* (</span><span class="ck">seconds</span> <span class="co">*</span> <span class="ck">seconds</span><span class="co">) /</span> <span class="cs">2.0</span> }<span class="co">;</span>
+    <span class="ck">return</span> <span class="ck">towerHeight</span> <span class="co">-</span> <span class="ck">fallen</span><span class="co">;</span>
+}
+
+<span class="ct">void</span> <span class="cf">printHeight</span>(<span class="ct">double</span> <span class="ck">height</span><span class="co">,</span> <span class="ct">int</span> <span class="ck">seconds</span>) {
+    <span class="ck">if</span> (<span class="ck">height</span> <span class="co">&gt;</span> <span class="cs">0.0</span>)
+        <span class="co">std::cout &lt;&lt;</span> <span class="cs">"At "</span> <span class="co">&lt;&lt;</span> <span class="ck">seconds</span>
+                  <span class="co">&lt;&lt;</span> <span class="cs">" seconds, the ball is at height: "</span>
+                  <span class="co">&lt;&lt;</span> <span class="ck">height</span> <span class="co">&lt;&lt;</span> <span class="cs">" meters\n"</span><span class="co">;</span>
+    <span class="ck">else</span>
+        <span class="co">std::cout &lt;&lt;</span> <span class="cs">"At "</span> <span class="co">&lt;&lt;</span> <span class="ck">seconds</span>
+                  <span class="co">&lt;&lt;</span> <span class="cs">" seconds, the ball is on the ground.\n"</span><span class="co">;</span>
+}
+
+<span class="ct">int</span> <span class="cf">main</span>() {
+    <span class="ct">double</span> <span class="ck">towerHeight</span> { <span class="cf">getTowerHeight</span>() }<span class="co">;</span>
+
+    <span class="cf">printHeight</span>(<span class="cf">calculateHeight</span>(<span class="ck">towerHeight</span><span class="co">,</span> <span class="cs">0</span>)<span class="co">,</span> <span class="cs">0</span>)<span class="co">;</span>
+    <span class="cf">printHeight</span>(<span class="cf">calculateHeight</span>(<span class="ck">towerHeight</span><span class="co">,</span> <span class="cs">1</span>)<span class="co">,</span> <span class="cs">1</span>)<span class="co">;</span>
+    <span class="cf">printHeight</span>(<span class="cf">calculateHeight</span>(<span class="ck">towerHeight</span><span class="co">,</span> <span class="cs">2</span>)<span class="co">,</span> <span class="cs">2</span>)<span class="co">;</span>
+    <span class="cf">printHeight</span>(<span class="cf">calculateHeight</span>(<span class="ck">towerHeight</span><span class="co">,</span> <span class="cs">3</span>)<span class="co">,</span> <span class="cs">3</span>)<span class="co">;</span>
+    <span class="cf">printHeight</span>(<span class="cf">calculateHeight</span>(<span class="ck">towerHeight</span><span class="co">,</span> <span class="cs">4</span>)<span class="co">,</span> <span class="cs">4</span>)<span class="co">;</span>
+    <span class="cf">printHeight</span>(<span class="cf">calculateHeight</span>(<span class="ck">towerHeight</span><span class="co">,</span> <span class="cs">5</span>)<span class="co">,</span> <span class="cs">5</span>)<span class="co">;</span>
+
+    <span class="ck">return</span> <span class="cs">0</span><span class="co">;</span>
+}
+
+<span class="cc">/*
+ * Physics recap:
+ * distance_fallen = ½ × g × t²
+ * height_of_ball  = initial_height - distance_fallen
+ *
+ * t=0: fallen=0 m       → height = towerHeight
+ * t=1: fallen=4.9 m     → height = towerHeight - 4.9
+ * t=2: fallen=19.6 m    → height = towerHeight - 19.6
+ * t=3: fallen=44.1 m    → etc.
+ */</span></code></pre>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ═══════════════════════════════════ MASTER SUMMARY ════════════════════════ -->
+    <section id="sec-master">
+      <div class="master-summary">
+        <h2>★ Master Summary — Chapter 4 Revision Sheet</h2>
+        <p>Everything you need to remember from Chapter 4 at a glance. Use this as your final review before any test.</p>
+
+        <div class="ms-grid">
+          <div class="ms-card">
+            <h4>Memory Basics</h4>
+            <ul>
+              <li>1 byte = 8 bits (sequential)</li>
+              <li>n bits → 2<sup>n</sup> unique values</li>
+              <li>Data type = how bits are interpreted</li>
+              <li><code>sizeof(T)</code> → size in bytes, returns <code>std::size_t</code></li>
+            </ul>
+          </div>
+          <div class="ms-card">
+            <h4>void</h4>
+            <ul>
+              <li>Means "no type" — incomplete, non-instantiable</li>
+              <li>Return type for value-less functions</li>
+              <li>Use <code>()</code> not <code>(void)</code> for empty param lists</li>
+            </ul>
+          </div>
+          <div class="ms-card">
+            <h4>Signed Integers</h4>
+            <ul>
+              <li>Range: −(2<sup>n−1</sup>) to 2<sup>n−1</sup>−1</li>
+              <li>Overflow = <strong>undefined behavior</strong></li>
+              <li>Division truncates toward zero (no rounding)</li>
+              <li>Prefer: <code>short</code>, <code>int</code>, <code>long</code>, <code>long long</code></li>
+            </ul>
+          </div>
+          <div class="ms-card">
+            <h4>Unsigned Integers</h4>
+            <ul>
+              <li>Range: 0 to 2<sup>n</sup>−1</li>
+              <li>Overflow wraps (modulo 2<sup>n</sup>)</li>
+              <li>Mixing with signed → signed becomes unsigned (dangerous if negative)</li>
+              <li>Prefer signed for general quantities</li>
+            </ul>
+          </div>
+          <div class="ms-card">
+            <h4>Fixed-Width Integers</h4>
+            <ul>
+              <li><code>#include &lt;cstdint&gt;</code></li>
+              <li><code>std::int8_t</code> through <code>std::int64_t</code></li>
+              <li>8-bit types act like chars — avoid for numbers</li>
+              <li><code>std::size_t</code> from <code>&lt;cstddef&gt;</code>, unsigned, for sizes</li>
+            </ul>
+          </div>
+          <div class="ms-card">
+            <h4>Scientific Notation</h4>
+            <ul>
+              <li>Format: <code>significand × 10<sup>exp</sup></code> → C++: <code>1.5e4</code></li>
+              <li>Leading zeros: never significant</li>
+              <li>Trailing zeros after decimal: significant</li>
+              <li>Trailing zeros, no decimal: ambiguous (assumed insignificant)</li>
+            </ul>
+          </div>
+          <div class="ms-card">
+            <h4>Floating Point</h4>
+            <ul>
+              <li><code>float</code>: 4 bytes, ~6–9 sig digits</li>
+              <li><code>double</code>: 8 bytes, ~15–18 sig digits (prefer)</li>
+              <li>Default literal type: <code>double</code>. Suffix <code>f</code> for float</li>
+              <li>Rounding errors exist; 0.1 ≠ exact in binary</li>
+              <li>Never use <code>==</code>; never for currency; avoid ÷ 0.0</li>
+              <li>Special values: <code>Inf</code>, <code>-Inf</code>, <code>NaN</code></li>
+            </ul>
+          </div>
+          <div class="ms-card">
+            <h4>Boolean</h4>
+            <ul>
+              <li><code>true</code> = 1, <code>false</code> = 0</li>
+              <li><code>cout</code>: 0/1 by default; <code>std::boolalpha</code> for words</li>
+              <li><code>cin</code>: expects 0/1 by default</li>
+              <li>0 → false; any non-zero → true</li>
+            </ul>
+          </div>
+          <div class="ms-card">
+            <h4>if Statements &amp; Early Return</h4>
+            <ul>
+              <li>Condition auto-converts to bool</li>
+              <li>0 = false, non-zero = true</li>
+              <li>Early return: immediately exits function</li>
+              <li>Return boolean expression directly: <code>return x &gt;= 0;</code></li>
+            </ul>
+          </div>
+          <div class="ms-card">
+            <h4>Chars</h4>
+            <ul>
+              <li>1 byte, stores integer (ASCII code)</li>
+              <li>Single quotes for literals: <code>'a'</code> not <code>"a"</code></li>
+              <li><code>cin &gt;&gt; ch</code>: skips whitespace; <code>cin.get(ch)</code>: doesn't</li>
+              <li>Escape sequences: <code>\n \t \\ \' \"</code></li>
+              <li>Avoid multichar literals: <code>'ab'</code> or <code>'/n'</code></li>
+            </ul>
+          </div>
+          <div class="ms-card">
+            <h4>Type Conversion</h4>
+            <ul>
+              <li>Implicit: automatic by compiler</li>
+              <li>Narrowing loses data → compiler warns</li>
+              <li>Brace-init blocks narrowing at compile time</li>
+              <li><code>static_cast&lt;T&gt;(expr)</code>: explicit, safe, preferred</li>
+              <li>char→int: get ASCII value; int→double: force fp division</li>
+            </ul>
+          </div>
+          <div class="ms-card">
+            <h4>Critical Best Practices</h4>
+            <ul>
+              <li>Prefer <code>double</code> over <code>float</code></li>
+              <li>Prefer signed over unsigned for quantities</li>
+              <li>Never compare floats with <code>==</code></li>
+              <li>Use <code>static_cast</code> for intentional conversions</li>
+              <li>Avoid <code>long double</code> and 8-bit fixed-width types</li>
+              <li>Use <code>()</code> not <code>(void)</code> for empty params</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3>Key Formulas at a Glance</h3>
+        <ul>
+          <li>Capacity: <strong>2<sup>n</sup></strong> unique values from n bits</li>
+          <li>Signed range: <strong>−(2<sup>n−1</sup>)</strong> to <strong>2<sup>n−1</sup>−1</strong></li>
+          <li>Unsigned range: <strong>0</strong> to <strong>2<sup>n</sup>−1</strong></li>
+          <li>5-bit signed: −16 to 15 &nbsp;|&nbsp; 5-bit unsigned: 0 to 31</li>
+          <li>Falling ball: height = towerH − (9.8 × t² / 2)</li>
+          <li>static_cast: <code>static_cast&lt;new_type&gt;(expression)</code></li>
+        </ul>
+
+        <a href="#" class="back-top">↑ Back to Top</a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+</body>
+</html>

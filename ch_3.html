@@ -1,0 +1,1840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 3: Debugging in C++ — Complete Study Guide</title>
+<style>
+  :root {
+    --bg: #F7F5FA;
+    --primary: #7C6ACF;
+    --accent: #F4A261;
+    --text: #2E2A38;
+    --highlight: #B7A9E3;
+    --card-bg: #FFFFFF;
+    --border: #E2DCF5;
+    --code-bg: #2E2A38;
+    --success: #4CAF8C;
+    --warning-bg: #FFF4EC;
+    --warning-border: #F4A261;
+    --def-bg: #F0ECFB;
+    --def-border: #7C6ACF;
+    --formula-bg: #EAF7F2;
+    --formula-border: #4CAF8C;
+    --note-bg: #EEF0FB;
+    --note-border: #B7A9E3;
+    --danger-bg: #FDF0EC;
+    --danger-border: #E07A5F;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.75;
+  }
+
+  /* ── Layout ── */
+  .page-wrapper {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── Sidebar TOC ── */
+  .sidebar {
+    width: 280px;
+    min-width: 280px;
+    background: var(--card-bg);
+    border-right: 2px solid var(--border);
+    padding: 32px 20px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .sidebar-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .toc-list { list-style: none; }
+  .toc-list li { margin-bottom: 2px; }
+
+  .toc-list a {
+    display: block;
+    padding: 5px 10px;
+    border-radius: 6px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 13.5px;
+    transition: all 0.2s;
+  }
+  .toc-list a:hover {
+    background: var(--def-bg);
+    color: var(--primary);
+    padding-left: 14px;
+  }
+
+  .toc-list .toc-h2 { font-weight: 600; margin-top: 6px; }
+  .toc-list .toc-h3 { padding-left: 22px; font-size: 12.5px; color: #6b6480; }
+  .toc-list .toc-h3:hover { padding-left: 26px; }
+
+  /* ── Main Content ── */
+  .main-content {
+    flex: 1;
+    padding: 48px 56px;
+    max-width: 980px;
+  }
+
+  /* ── Hero Banner ── */
+  .hero {
+    background: linear-gradient(135deg, var(--primary) 0%, #5A4AA8 100%);
+    border-radius: 16px;
+    padding: 48px 48px;
+    margin-bottom: 52px;
+    color: #fff;
+    box-shadow: 0 8px 32px rgba(124,106,207,0.28);
+  }
+  .hero-tag {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--highlight);
+    margin-bottom: 12px;
+  }
+  .hero h1 {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+  .hero p {
+    font-size: 16px;
+    opacity: 0.88;
+    max-width: 600px;
+  }
+
+  /* ── Section Headings ── */
+  .section { margin-bottom: 64px; }
+
+  h2 {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 8px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid var(--border);
+    scroll-margin-top: 24px;
+  }
+
+  h3 {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 28px 0 12px;
+    scroll-margin-top: 24px;
+  }
+
+  h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 18px 0 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  p { margin-bottom: 14px; }
+
+  /* ── Boxes ── */
+  .box {
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin: 20px 0;
+    border-left: 5px solid;
+  }
+
+  .box-title {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .def-box {
+    background: var(--def-bg);
+    border-color: var(--primary);
+  }
+  .def-box .box-title { color: var(--primary); }
+
+  .formula-box {
+    background: var(--formula-bg);
+    border-color: var(--formula-border);
+  }
+  .formula-box .box-title { color: #2e7d5c; }
+
+  .note-box {
+    background: var(--note-bg);
+    border-color: var(--highlight);
+  }
+  .note-box .box-title { color: #6653a8; }
+
+  .warning-box {
+    background: var(--warning-bg);
+    border-color: var(--warning-border);
+  }
+  .warning-box .box-title { color: #c05c1a; }
+
+  .danger-box {
+    background: var(--danger-bg);
+    border-color: var(--danger-border);
+  }
+  .danger-box .box-title { color: #b04a2e; }
+
+  .success-box {
+    background: #EBF7F3;
+    border-color: var(--success);
+  }
+  .success-box .box-title { color: #2e7d5c; }
+
+  /* ── Ordered/Unordered Lists ── */
+  ul, ol {
+    padding-left: 22px;
+    margin-bottom: 14px;
+  }
+  li { margin-bottom: 6px; }
+  li strong { color: var(--primary); }
+
+  /* ── Tables ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 22px 0;
+    font-size: 14.5px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+  thead tr { background: var(--primary); color: #fff; }
+  thead th { padding: 12px 16px; text-align: left; font-weight: 700; }
+  tbody tr { background: var(--card-bg); border-bottom: 1px solid var(--border); }
+  tbody tr:nth-child(even) { background: var(--def-bg); }
+  tbody td { padding: 11px 16px; vertical-align: top; }
+  tbody td:first-child { font-weight: 600; color: var(--primary); }
+
+  /* ── Inline Code ── */
+  code.inline {
+    background: #EDEAF8;
+    color: #5A3EA8;
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 13.5px;
+  }
+
+  /* ── Code Blocks ── */
+  .code-block-wrapper {
+    background-color: var(--code-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 22px 0;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+  }
+
+  .code-header {
+    background-color: var(--primary);
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .code-dots { display: flex; gap: 6px; }
+  .dot {
+    width: 11px; height: 11px;
+    border-radius: 50%;
+  }
+  .dot-orange { background: var(--accent); }
+  .dot-purple { background: var(--highlight); }
+  .dot-white  { background: #F7F5FA; }
+
+  .code-filename {
+    color: #F7F5FA;
+    font-size: 12.5px;
+    font-weight: 700;
+    opacity: 0.88;
+    margin-left: 6px;
+  }
+
+  pre {
+    margin: 0;
+    padding: 24px 28px;
+    overflow-x: auto;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: #F7F5FA;
+  }
+
+  /* Syntax colors */
+  .c-comment  { color: #B5CEA8; }
+  .c-keyword  { color: #9CDCFE; }
+  .c-type     { color: #4EC9B0; }
+  .c-string   { color: #F4A261; }
+  .c-op       { color: #F7F5FA; }
+  .c-fn       { color: #DCDCAA; }
+  .c-number   { color: #F4A261; }
+  .c-preproc  { color: #C586C0; }
+
+  /* ── Step Cards ── */
+  .steps { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
+  .step-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    background: var(--card-bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .step-number {
+    min-width: 34px; height: 34px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+  .step-body { flex: 1; }
+  .step-title { font-weight: 700; color: var(--text); font-size: 15px; margin-bottom: 3px; }
+  .step-desc { font-size: 14px; color: #5a5470; }
+
+  /* ── Command Cards (Debugger) ── */
+  .cmd-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+    margin: 20px 0;
+  }
+  .cmd-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: box-shadow 0.2s;
+  }
+  .cmd-card:hover { box-shadow: 0 4px 18px rgba(124,106,207,0.14); }
+  .cmd-name {
+    font-weight: 800;
+    color: var(--primary);
+    font-size: 15px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .cmd-icon { font-size: 18px; }
+  .cmd-desc { font-size: 13.5px; color: #5a5470; line-height: 1.6; }
+
+  /* ── Call Stack Visualization ── */
+  .call-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin: 24px 0;
+  }
+  .stack-frame {
+    width: 260px;
+    text-align: center;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 15px;
+    border: 2px solid;
+    position: relative;
+  }
+  .stack-top    { background: #E8F7F0; border-color: #4CAF8C; color: #1e6044; }
+  .stack-mid    { background: var(--def-bg); border-color: var(--primary); color: var(--primary); }
+  .stack-bottom { background: #FFF4EC; border-color: var(--accent); color: #8B4513; }
+  .stack-label  { position: absolute; right: -80px; top: 50%; transform: translateY(-50%); font-size: 11px; color: #888; font-weight: 600; }
+  .stack-arrow  { font-size: 20px; color: #bbb; }
+
+  /* ── Quiz Cards ── */
+  .quiz-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 28px 0;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.07);
+  }
+  .quiz-header {
+    background: linear-gradient(90deg, var(--primary), #5A4AA8);
+    padding: 14px 22px;
+    color: #fff;
+    font-weight: 800;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .quiz-badge {
+    background: var(--accent);
+    color: #fff;
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .quiz-body { padding: 22px 24px; }
+
+  /* ── Comparison Grid ── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .compare-card {
+    border-radius: 10px;
+    padding: 18px;
+    border: 1.5px solid;
+  }
+  .compare-card h4 { margin: 0 0 10px; font-size: 14px; }
+  .compare-card ul { padding-left: 16px; font-size: 13.5px; }
+  .compare-left  { background: #FEF4F0; border-color: #E07A5F; }
+  .compare-left h4 { color: #b04a2e; }
+  .compare-right { background: #EBF7F3; border-color: #4CAF8C; }
+  .compare-right h4 { color: #2e7d5c; }
+
+  /* ── Summary Strip ── */
+  .summary-strip {
+    background: linear-gradient(135deg, #EEF0FB 0%, #F0ECFB 100%);
+    border: 2px solid var(--highlight);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-top: 32px;
+  }
+  .summary-strip h4 {
+    color: var(--primary);
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .summary-items { display: flex; flex-wrap: wrap; gap: 10px; }
+  .summary-pill {
+    background: var(--primary);
+    color: #fff;
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* ── Master Revision Sheet ── */
+  .revision-sheet {
+    background: linear-gradient(135deg, var(--primary) 0%, #4A3898 100%);
+    border-radius: 16px;
+    padding: 40px 44px;
+    color: #fff;
+    margin-top: 48px;
+    box-shadow: 0 8px 32px rgba(124,106,207,0.32);
+  }
+  .revision-sheet h2 { color: #fff; border-color: rgba(255,255,255,0.2); }
+  .revision-sheet h3 { color: var(--highlight); }
+  .revision-item {
+    background: rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin: 8px 0;
+    font-size: 14px;
+    border-left: 3px solid var(--accent);
+  }
+  .revision-item strong { color: var(--accent); }
+
+  /* ── Divider ── */
+  .divider {
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary), transparent);
+    border: none;
+    margin: 48px 0;
+    border-radius: 2px;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main-content { padding: 28px 20px; }
+    .compare-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- ═══════════════════ SIDEBAR TOC ═══════════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-title">📖 Table of Contents</div>
+    <ul class="toc-list">
+      <li><a class="toc-h2" href="#s-overview">Chapter Overview</a></li>
+      <li><a class="toc-h2" href="#s-31">3.1 — Syntax & Semantic Errors</a></li>
+      <li><a class="toc-h3" href="#s-31-syntax">Syntax Errors</a></li>
+      <li><a class="toc-h3" href="#s-31-semantic">Semantic Errors</a></li>
+      <li><a class="toc-h3" href="#s-31-compare">Comparison Table</a></li>
+      <li><a class="toc-h2" href="#s-32">3.2 — The Debugging Process</a></li>
+      <li><a class="toc-h2" href="#s-33">3.3 — Strategy for Debugging</a></li>
+      <li><a class="toc-h3" href="#s-33-inspect">Code Inspection</a></li>
+      <li><a class="toc-h3" href="#s-33-hilo">Hi-Lo Strategy</a></li>
+      <li><a class="toc-h2" href="#s-34">3.4 — Basic Debugging Tactics</a></li>
+      <li><a class="toc-h3" href="#s-34-comment">Commenting Out</a></li>
+      <li><a class="toc-h3" href="#s-34-flow">Validating Code Flow</a></li>
+      <li><a class="toc-h3" href="#s-34-print">Printing Values</a></li>
+      <li><a class="toc-h3" href="#s-34-cerr">cerr vs cout</a></li>
+      <li><a class="toc-h2" href="#s-35">3.5 — More Debugging Tactics</a></li>
+      <li><a class="toc-h3" href="#s-35-cond">Conditionalizing Code</a></li>
+      <li><a class="toc-h3" href="#s-35-logger">Using a Logger</a></li>
+      <li><a class="toc-h2" href="#s-36">3.6 — Integrated Debugger: Stepping</a></li>
+      <li><a class="toc-h3" href="#s-36-state">Program State</a></li>
+      <li><a class="toc-h3" href="#s-36-cmds">Stepping Commands</a></li>
+      <li><a class="toc-h2" href="#s-37">3.7 — Running & Breakpoints</a></li>
+      <li><a class="toc-h2" href="#s-38">3.8 — Watching Variables</a></li>
+      <li><a class="toc-h2" href="#s-39">3.9 — The Call Stack</a></li>
+      <li><a class="toc-h2" href="#s-310">3.10 — Prevention Strategies</a></li>
+      <li><a class="toc-h2" href="#s-quiz">Quiz Solutions</a></li>
+      <li><a class="toc-h3" href="#s-q1">Question 1</a></li>
+      <li><a class="toc-h3" href="#s-q2">Question 2</a></li>
+      <li><a class="toc-h3" href="#s-q3">Question 3</a></li>
+      <li><a class="toc-h3" href="#s-q4">Question 4 (Extra)</a></li>
+      <li><a class="toc-h2" href="#s-revision">Master Revision Sheet</a></li>
+    </ul>
+  </aside>
+
+  <!-- ═══════════════════ MAIN CONTENT ═══════════════════ -->
+  <main class="main-content">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-tag">C++ Programming • Complete Study Guide</div>
+      <h1>Chapter 3: Debugging in C++</h1>
+      <p>A comprehensive, deeply explained guide covering every concept — from error types and debugging strategies to integrated debugger mastery and prevention best practices. Includes full quiz solutions with annotated code.</p>
+    </div>
+
+    <!-- ═══════════════════ OVERVIEW ═══════════════════ -->
+    <section class="section" id="s-overview">
+      <h2>Chapter Overview</h2>
+      <p>This chapter addresses one of the most critical skills in software development: <strong>finding and fixing bugs</strong>. Even perfectly structured programs can contain logic errors that only appear at runtime. You will learn a systematic mental framework for debugging, practical code-based tactics, and how to leverage the powerful integrated debugger built into modern IDEs.</p>
+
+      <table>
+        <thead><tr><th>Section</th><th>Core Topic</th><th>Key Takeaway</th></tr></thead>
+        <tbody>
+          <tr><td>3.1</td><td>Error Types</td><td>Compiler catches syntax; you must find semantic errors</td></tr>
+          <tr><td>3.2</td><td>Debugging Process</td><td>6 structured steps from discovery to verified fix</td></tr>
+          <tr><td>3.3</td><td>Strategy</td><td>Hi-Lo narrowing to isolate the root cause</td></tr>
+          <tr><td>3.4</td><td>Basic Tactics</td><td>Commenting, <code class="inline">cerr</code> logging, value printing</td></tr>
+          <tr><td>3.5</td><td>Advanced Tactics</td><td><code class="inline">#ifdef</code> guards, external loggers</td></tr>
+          <tr><td>3.6</td><td>Debugger Stepping</td><td>Step Into / Over / Out / Back</td></tr>
+          <tr><td>3.7</td><td>Breakpoints</td><td>Run to Cursor, Continue, persistent breakpoints</td></tr>
+          <tr><td>3.8</td><td>Watch Window</td><td>Inspect and monitor live variable values</td></tr>
+          <tr><td>3.9</td><td>Call Stack</td><td>Trace the exact sequence of function calls</td></tr>
+          <tr><td>3.10</td><td>Prevention</td><td>Refactoring, unit tests, assert, static analysis</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══════════════════ 3.1 ═══════════════════ -->
+    <section class="section" id="s-31">
+      <h2>3.1 — Syntax and Semantic Errors</h2>
+      <p>Before you can debug, you must understand <em>what kind</em> of error you're dealing with. All software errors belong to one of two fundamental categories.</p>
+
+      <!-- SYNTAX -->
+      <h3 id="s-31-syntax">Syntax Errors</h3>
+      <div class="def-box box">
+        <div class="box-title">📖 Definition — Syntax Error</div>
+        A <strong>syntax error</strong> occurs when a statement violates the grammatical rules of the C++ language. The compiler cannot parse or translate the code and will <strong>refuse to compile</strong>, issuing a descriptive error message pointing to the problem.
+      </div>
+
+      <p>Think of syntax as the grammar of the programming language — just as "The cat sat on" is an incomplete English sentence, a statement missing a semicolon or closing brace is an incomplete C++ statement.</p>
+
+      <p><strong>Common examples of syntax errors:</strong></p>
+      <ul>
+        <li>Missing semicolons at the end of statements</li>
+        <li>Mismatched parentheses, braces, or brackets</li>
+        <li>Using a variable that has never been declared</li>
+        <li>Calling a function that doesn't exist or has the wrong number of arguments</li>
+        <li>Incorrect keyword spelling (e.g., <code class="inline">Int</code> instead of <code class="inline">int</code>)</li>
+      </ul>
+
+      <div class="code-block-wrapper">
+        <div class="code-header">
+          <div class="code-dots">
+            <div class="dot dot-orange"></div>
+            <div class="dot dot-purple"></div>
+            <div class="dot dot-white"></div>
+          </div>
+          <span class="code-filename">syntax_error_example.cpp</span>
+        </div>
+        <pre><code><span class="c-type">int</span> <span class="c-fn">main</span><span class="c-op">() {</span>
+    <span class="c-type">int</span> <span class="c-op">x = </span><span class="c-number">5</span>   <span class="c-comment">// ❌ ERROR: Missing semicolon!</span>
+    <span class="c-op">std::cout &lt;&lt;</span> <span class="c-op">y</span> <span class="c-comment">// ❌ ERROR: 'y' was never declared</span>
+    <span class="c-keyword">return</span> <span class="c-number">0</span><span class="c-op">;</span>
+<span class="c-comment">// ❌ ERROR: Missing closing brace '}'</span></code></pre>
+      </div>
+
+      <div class="note-box box">
+        <div class="box-title">💡 Key Point</div>
+        The compiler is your first line of defense against syntax errors. Always read compiler error messages carefully — they usually tell you the exact file and line number of the problem. Fix the <em>first</em> error reported first, as one syntax error can cascade into many false secondary errors.
+      </div>
+
+      <!-- SEMANTIC -->
+      <h3 id="s-31-semantic">Semantic Errors (Logic Errors)</h3>
+      <div class="def-box box">
+        <div class="box-title">📖 Definition — Semantic Error</div>
+        A <strong>semantic error</strong> (also called a <strong>logic error</strong>) occurs when a statement is grammatically valid C++ — the compiler accepts it — but it does <strong>not</strong> do what the programmer intended. The program compiles and runs, but produces incorrect or unexpected results.
+      </div>
+
+      <p>Semantic errors are subdivided based on <em>when</em> they manifest:</p>
+
+      <h4>Compile-Time Semantic Errors</h4>
+      <p>Some compilers / static analysis tools can catch certain semantic violations at compile time. The most common example is a <strong>type mismatch</strong> — assigning a value of one type to a variable expecting a different type when there is no valid implicit conversion.</p>
+
+      <div class="code-block-wrapper">
+        <div class="code-header">
+          <div class="code-dots">
+            <div class="dot dot-orange"></div>
+            <div class="dot dot-purple"></div>
+            <div class="dot dot-white"></div>
+          </div>
+          <span class="code-filename">compile_time_semantic.cpp</span>
+        </div>
+        <pre><code><span class="c-type">int</span> <span class="c-fn">main</span><span class="c-op">() {</span>
+    <span class="c-type">int</span> <span class="c-op">x =</span> <span class="c-string">"hello"</span><span class="c-op">;</span>  <span class="c-comment">// Compile-time semantic error: cannot assign string to int</span>
+    <span class="c-keyword">return</span> <span class="c-number">0</span><span class="c-op">;</span>
+<span class="c-op">}</span></code></pre>
+      </div>
+
+      <h4>Run-Time Semantic Errors</h4>
+      <p>These are the most dangerous and common category. The program compiles perfectly, but misbehaves when executed. They include:</p>
+      <ul>
+        <li><strong>Division by zero:</strong> Causes an immediate program crash</li>
+        <li><strong>Uninitialized variables:</strong> Variables used before being assigned a value contain garbage data, leading to <em>undefined behavior</em> — the program may crash, produce wrong results, or appear to work correctly by accident</li>
+        <li><strong>Off-by-one errors:</strong> Looping one too many or one too few times</li>
+        <li><strong>Wrong operator:</strong> Using <code class="inline">-</code> instead of <code class="inline">+</code>, or <code class="inline">=</code> instead of <code class="inline">==</code></li>
+        <li><strong>Wrong algorithm:</strong> The entire approach is logically flawed</li>
+      </ul>
+
+      <div class="code-block-wrapper">
+        <div class="code-header">
+          <div class="code-dots">
+            <div class="dot dot-orange"></div>
+            <div class="dot dot-purple"></div>
+            <div class="dot dot-white"></div>
+          </div>
+          <span class="code-filename">runtime_semantic.cpp</span>
+        </div>
+        <pre><code><span class="c-type">int</span> <span class="c-fn">main</span><span class="c-op">() {</span>
+    <span class="c-type">int</span> <span class="c-op">x{};</span>           <span class="c-comment">// x is 0</span>
+    <span class="c-type">int</span> <span class="c-op">y;</span>             <span class="c-comment">// ⚠️ Uninitialized! Contains garbage value</span>
+    <span class="c-type">int</span> <span class="c-op">z = x / y;</span>    <span class="c-comment">// ❌ Division by zero (x=0 is fine, but y is garbage)</span>
+    
+    <span class="c-type">int</span> <span class="c-op">sum = x</span> <span class="c-keyword">-</span> <span class="c-number">5</span><span class="c-op">;</span>  <span class="c-comment">// ❌ Wrong operator: should be + but uses -</span>
+    <span class="c-keyword">return</span> <span class="c-number">0</span><span class="c-op">;</span>
+<span class="c-op">}</span></code></pre>
+      </div>
+
+      <!-- COMPARISON TABLE -->
+      <h3 id="s-31-compare">Error Type Comparison</h3>
+      <table>
+        <thead>
+          <tr><th>Property</th><th>Syntax Error</th><th>Semantic Error</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Grammar Valid?</td><td>No — violates C++ grammar</td><td>Yes — valid C++ code</td></tr>
+          <tr><td>Detected By</td><td>Compiler (always)</td><td>Programmer / Debugger / Testing</td></tr>
+          <tr><td>Program Compiles?</td><td>No</td><td>Yes</td></tr>
+          <tr><td>When Visible</td><td>At compile time</td><td>At compile time or run time</td></tr>
+          <tr><td>Difficulty to Find</td><td>Easy — compiler shows location</td><td>Hard — requires analysis</td></tr>
+          <tr><td>Examples</td><td>Missing <code class="inline">;</code>, undeclared variable</td><td>Wrong operator, divide by zero, uninitialized variable</td></tr>
+        </tbody>
+      </table>
+
+      <div class="summary-strip">
+        <h4>§ 3.1 Summary</h4>
+        <div class="summary-items">
+          <span class="summary-pill">Syntax = Grammar Violation</span>
+          <span class="summary-pill">Semantic = Logic Violation</span>
+          <span class="summary-pill">Compiler catches syntax</span>
+          <span class="summary-pill">Semantic needs debugging</span>
+          <span class="summary-pill">Runtime errors = hardest to find</span>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══════════════════ 3.2 ═══════════════════ -->
+    <section class="section" id="s-32">
+      <h2>3.2 — The Debugging Process</h2>
+      <p>When your program compiles successfully but produces incorrect output, you have a semantic/logic error somewhere. Debugging is the systematic process of finding and eliminating these errors. There are <strong>six structured steps</strong>:</p>
+
+      <div class="steps">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-body">
+            <div class="step-title">Find the Root Cause</div>
+            <div class="step-desc">Identify the <em>exact</em> line (or lines) of code responsible for the incorrect behavior. This is almost always the hardest step. A symptom (wrong output) can appear far from its cause (bad assignment). Do not confuse symptoms with causes.</div>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-body">
+            <div class="step-title">Understand the Problem</div>
+            <div class="step-desc">Once you've located the problematic code, deeply understand <em>why</em> it's wrong. What assumption did the programmer make that turned out to be false? Understanding this prevents you from "fixing" a symptom while leaving the real bug intact.</div>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-body">
+            <div class="step-title">Determine a Fix</div>
+            <div class="step-desc">Decide on the correct solution. Consider edge cases — will your fix hold up for all valid inputs? Could it break any other currently working functionality? Think before you type.</div>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-number">4</div>
+          <div class="step-body">
+            <div class="step-title">Repair the Issue</div>
+            <div class="step-desc">Implement your fix in the source code. Make one focused change at a time. Changing multiple things simultaneously makes it impossible to know which change actually fixed (or broke) things.</div>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-number">5</div>
+          <div class="step-body">
+            <div class="step-title">Retest the Original Problem</div>
+            <div class="step-desc">Verify that the specific issue you targeted is now resolved. Use the same test inputs that originally revealed the bug. Confirm the output is now correct.</div>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-number">6</div>
+          <div class="step-body">
+            <div class="step-title">Retest for Regressions</div>
+            <div class="step-desc">Ensure your fix hasn't broken any previously working functionality. Run a broader set of tests. A "regression" is a new bug introduced by a fix — this is extremely common and must be checked.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="warning-box box">
+        <div class="box-title">⚠️ Common Mistake</div>
+        Many beginners jump straight from "noticing a problem" to "randomly changing code." This is counterproductive — it can introduce new bugs, waste time, and make the root cause harder to find. Always follow the process: <strong>locate → understand → plan → fix → verify</strong>.
+      </div>
+
+      <div class="summary-strip">
+        <h4>§ 3.2 Summary</h4>
+        <div class="summary-items">
+          <span class="summary-pill">6 Steps Total</span>
+          <span class="summary-pill">Finding root cause = hardest</span>
+          <span class="summary-pill">One fix at a time</span>
+          <span class="summary-pill">Always test for regressions</span>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══════════════════ 3.3 ═══════════════════ -->
+    <section class="section" id="s-33">
+      <h2>3.3 — A Strategy for Debugging</h2>
+      <p>The hardest part of debugging (Step 1) is finding the root cause. Two primary strategies exist:</p>
+
+      <h3 id="s-33-inspect">Code Inspection</h3>
+      <p>In small programs or isolated functions, you can sometimes find the problem by carefully reading the code — examining variable names, operator choices, and logic flow.</p>
+
+      <div class="danger-box box">
+        <div class="box-title">🚫 Limitation of Code Inspection</div>
+        In larger programs, code inspection becomes progressively less effective because:
+        <ul style="margin-top:8px;">
+          <li>You read what you <em>think</em> you wrote, not what you actually wrote (your brain auto-corrects)</li>
+          <li>You may visually gloss over bad assumptions that seem reasonable in isolation</li>
+          <li>Complexity makes it impossible to mentally trace all execution paths</li>
+        </ul>
+      </div>
+
+      <h3 id="s-33-hilo">Running the Program: The Hi-Lo Strategy</h3>
+      <p>When inspection fails, you must <strong>observe the program's behavior while it runs</strong>. Use a "hi-lo" binary search strategy to narrow down where the bug lives:</p>
+
+      <div class="def-box box">
+        <div class="box-title">📖 The Hi-Lo Guessing Game Analogy</div>
+        Imagine you're thinking of a number between 1 and 100. Your friend guesses 50. You say "too high!" They now know the number is between 1 and 49. They guess 25. "Too low!" — now they know it's between 26 and 49. Each guess <em>cuts the search space in half</em>. Applied to debugging, you insert inspection points and check whether the bug has appeared yet.
+      </div>
+
+      <p><strong>The two key observations:</strong></p>
+
+      <div class="compare-grid">
+        <div class="compare-card compare-right">
+          <h4>✅ "Too Low" — Bug not yet occurred</h4>
+          <ul>
+            <li>Program behaves correctly up to a certain point</li>
+            <li>The bug must be <em>after</em> this point in execution</li>
+            <li>Move your inspection point later in the program</li>
+          </ul>
+        </div>
+        <div class="compare-card compare-left">
+          <h4>❌ "Too High" — Bug has already occurred</h4>
+          <ul>
+            <li>You observe incorrect behavior (wrong variable value, bad output)</li>
+            <li>The bug must have happened <em>before</em> this point in execution</li>
+            <li>Move your inspection point earlier in the program</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="note-box box">
+        <div class="box-title">💡 Reproduction is Critical</div>
+        Before you can apply any strategy, you must be able to <strong>reliably reproduce the bug</strong>. A bug that appears randomly cannot be systematically investigated. Document the exact input values and steps needed to trigger the error — these are your "reproduction steps." An unreproducible bug is extremely difficult (sometimes impossible) to fix.
+      </div>
+
+      <div class="summary-strip">
+        <h4>§ 3.3 Summary</h4>
+        <div class="summary-items">
+          <span class="summary-pill">Inspection fails in large programs</span>
+          <span class="summary-pill">Hi-Lo = binary search for bugs</span>
+          <span class="summary-pill">Correct behavior → bug is after</span>
+          <span class="summary-pill">Wrong behavior → bug is before</span>
+          <span class="summary-pill">Must be able to reproduce reliably</span>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══════════════════ 3.4 ═══════════════════ -->
+    <section class="section" id="s-34">
+      <h2>3.4 — Basic Debugging Tactics</h2>
+      <p>These are the hands-on tools you use to execute the Hi-Lo strategy.</p>
+
+      <!-- COMMENTING -->
+      <h3 id="s-34-comment">Tactic 1: Commenting Out Code</h3>
+      <p>Temporarily comment out blocks of code (especially function calls) to isolate which section is causing the bug.</p>
+
+      <div class="formula-box box">
+        <div class="box-title">🔬 The Logic</div>
+        <ul>
+          <li>If you comment out code and the <strong>bug disappears</strong> → the commented code is the culprit</li>
+          <li>If you comment out code and the <strong>bug remains</strong> → the commented code is innocent, and your search narrows to what remains active</li>
+        </ul>
+      </div>
+
+      <div class="code-block-wrapper">
+        <div class="code-header">
+          <div class="code-dots">
+            <div class="dot dot-orange"></div>
+            <div class="dot dot-purple"></div>
+            <div class="dot dot-white"></div>
+          </div>
+          <span class="code-filename">commenting_tactic.cpp</span>
+        </div>
+        <pre><code><span class="c-type">int</span> <span class="c-fn">main</span><span class="c-op">() {</span>
+    <span class="c-fn">functionA</span><span class="c-op">();</span>
+    <span class="c-comment">// functionB(); // Comment this out — does the bug disappear?</span>
+    <span class="c-fn">functionC</span><span class="c-op">();</span>
+    <span class="c-keyword">return</span> <span class="c-number">0</span><span class="c-op">;</span>
+<span class="c-op">}</span></code></pre>
+      </div>
+
+      <div class="danger-box box">
+        <div class="box-title">🚫 Warning</div>
+        Always remember to <strong>uncomment your code</strong> after debugging! Leaving functions permanently commented out silently removes functionality without any compiler warning.
+      </div>
+
+      <!-- FLOW VALIDATION -->
+      <h3 id="s-34-flow">Tactic 2: Validating Code Flow</h3>
+      <p>In complex programs with many functions, a bug might be caused by a function being called the wrong number of times — too many, too few, or never. Place temporary print statements at the top of functions to trace execution flow.</p>
+
+      <div class="code-block-wrapper">
+        <div class="code-header">
+          <div class="code-dots">
+            <div class="dot dot-orange"></div>
+            <div class="dot dot-purple"></div>
+            <div class="dot dot-white"></div>
+          </div>
+          <span class="code-filename">flow_validation.cpp</span>
+        </div>
+        <pre><code><span class="c-preproc">#include</span> <span class="c-string">&lt;iostream&gt;</span>
+
+<span class="c-type">void</span> <span class="c-fn">processOrder</span><span class="c-op">() {</span>
+    <span class="c-op">std::cerr &lt;&lt;</span> <span class="c-string">"processOrder() called\n"</span><span class="c-op">;</span>  <span class="c-comment">// Trace: is this called?</span>
+    <span class="c-comment">// ... function logic ...</span>
+<span class="c-op">}</span>
+
+<span class="c-type">void</span> <span class="c-fn">applyDiscount</span><span class="c-op">() {</span>
+    <span class="c-op">std::cerr &lt;&lt;</span> <span class="c-string">"applyDiscount() called\n"</span><span class="c-op">;</span> <span class="c-comment">// Trace: called how many times?</span>
+    <span class="c-comment">// ... function logic ...</span>
+<span class="c-op">}</span></code></pre>
+      </div>
+
+      <!-- PRINTING VALUES -->
+      <h3 id="s-34-print">Tactic 3: Printing Variable Values</h3>
+      <p>Output variable values at key points to verify they hold what you expect. If a variable has an unexpected value at a print statement, the bug occurred <em>before</em> that line.</p>
+
+      <div class="code-block-wrapper">
+        <div class="code-header">
+          <div class="code-dots">
+            <div class="dot dot-orange"></div>
+            <div class="dot dot-purple"></div>
+            <div class="dot dot-white"></div>
+          </div>
+          <span class="code-filename">print_debugging.cpp</span>
+        </div>
+        <pre><code><span class="c-type">int</span> <span class="c-fn">calculateTotal</span><span class="c-op">(</span><span class="c-type">int</span> <span class="c-op">price,</span> <span class="c-type">int</span> <span class="c-op">qty) {</span>
+    <span class="c-type">int</span> <span class="c-op">subtotal = price * qty;</span>
+    <span class="c-op">std::cerr &lt;&lt;</span> <span class="c-string">"Debug: subtotal = "</span> <span class="c-op">&lt;&lt; subtotal &lt;&lt;</span> <span class="c-string">'\n'</span><span class="c-op">;</span> <span class="c-comment">// Check intermediate value</span>
+    <span class="c-type">int</span> <span class="c-op">tax = subtotal *</span> <span class="c-number">0.08</span><span class="c-op">;</span>
+    <span class="c-op">std::cerr &lt;&lt;</span> <span class="c-string">"Debug: tax = "</span> <span class="c-op">&lt;&lt; tax &lt;&lt;</span> <span class="c-string">'\n'</span><span class="c-op">;</span>       <span class="c-comment">// Is tax calculated correctly?</span>
+    <span class="c-keyword">return</span> <span class="c-op">subtotal + tax;</span>
+<span class="c-op">}</span></code></pre>
+      </div>
+
+      <!-- CERR VS COUT -->
+      <h3 id="s-34-cerr"><code class="inline">std::cerr</code> vs <code class="inline">std::cout</code></h3>
+
+      <div class="def-box box">
+        <div class="box-title">📖 Why Always Use std::cerr for Debugging</div>
+        <table style="margin:8px 0 0; font-size:13.5px;">
+          <thead><tr><th>Property</th><th><code>std::cout</code></th><th><code>std::cerr</code></th></tr></thead>
+          <tbody>
+            <tr><td>Buffering</td><td>Buffered — output may be delayed</td><td>Unbuffered — outputs immediately</td></tr>
+            <tr><td>Output Stream</td><td>Standard Output (stdout)</td><td>Standard Error (stderr)</td></tr>
+            <tr><td>Crash Safety</td><td>❌ Buffer may not flush before crash</td><td>✅ Always outputs before crash</td></tr>
+            <tr><td>Separation</td><td>Mixed with program UI output</td><td>Separated from program output</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><strong>Why does buffering matter?</strong> If your program crashes, any content sitting in <code class="inline">std::cout</code>'s buffer may never be printed — giving you false information about where the crash occurred. <code class="inline">std::cerr</code> writes immediately, so you always see its output even if the program crashes on the very next line.</p>
+
+      <h3>Why Manual Print Debugging Has Fundamental Flaws</h3>
+      <div class="danger-box box">
+        <div class="box-title">🚫 Problems with Print Debugging</div>
+        <ol style="margin-top:8px; padding-left:18px;">
+          <li><strong>Code clutter:</strong> Debug statements mix with real code, making it harder to read</li>
+          <li><strong>Console clutter:</strong> Debug output mixes with actual program output, confusing users</li>
+          <li><strong>Requires code modification:</strong> Adding/removing print statements is itself risky — you might introduce a new bug while adding a debug line</li>
+          <li><strong>Non-reusable:</strong> Once removed, the debugging work is lost. If the bug reappears, you start from scratch</li>
+          <li><strong>Easy to forget:</strong> Shipping code with leftover debug output is a common mistake</li>
+        </ol>
+      </div>
+
+      <div class="summary-strip">
+        <h4>§ 3.4 Summary</h4>
+        <div class="summary-items">
+          <span class="summary-pill">Comment out → isolate culprit</span>
+          <span class="summary-pill">Print at function tops → trace flow</span>
+          <span class="summary-pill">Print values → find wrong state</span>
+          <span class="summary-pill">Always use cerr (unbuffered)</span>
+          <span class="summary-pill">Print debugging has major flaws</span>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══════════════════ 3.5 ═══════════════════ -->
+    <section class="section" id="s-35">
+      <h2>3.5 — More Debugging Tactics</h2>
+      <p>These tactics address the flaws of basic print debugging by making debug code easier to manage and toggle.</p>
+
+      <!-- CONDITIONALIZING -->
+      <h3 id="s-35-cond">Tactic 1: Conditionalizing Debug Code with Preprocessor Directives</h3>
+      <p>Instead of deleting debug statements, <strong>wrap them in preprocessor conditionals</strong>. A single <code class="inline">#define</code> acts as a master on/off switch for all debug output.</p>
+
+      <div class="code-block-wrapper">
+        <div class="code-header">
+          <div class="code-dots">
+            <div class="dot dot-orange"></div>
+            <div class="dot dot-purple"></div>
+            <div class="dot dot-white"></div>
+          </div>
+          <span class="code-filename">conditioned_debug.cpp</span>
+        </div>
+        <pre><code><span class="c-preproc">#include</span> <span class="c-string">&lt;iostream&gt;</span>
+
+<span class="c-preproc">#define ENABLE_DEBUG</span>  <span class="c-comment">// Comment this ONE line to disable ALL debug output</span>
+
+<span class="c-type">int</span> <span class="c-fn">calculateSquare</span><span class="c-op">(</span><span class="c-type">int</span> <span class="c-op">x) {</span>
+<span class="c-preproc">#ifdef ENABLE_DEBUG</span>
+    <span class="c-op">std::cerr &lt;&lt;</span> <span class="c-string">"calculateSquare() called with x = "</span> <span class="c-op">&lt;&lt; x &lt;&lt;</span> <span class="c-string">'\n'</span><span class="c-op">;</span>
+<span class="c-preproc">#endif</span>
+    <span class="c-keyword">return</span> <span class="c-op">x * x;</span>
+<span class="c-op">}</span>
+
+<span class="c-type">int</span> <span class="c-fn">main</span><span class="c-op">() {</span>
+<span class="c-preproc">#ifdef ENABLE_DEBUG</span>
+    <span class="c-op">std::cerr &lt;&lt;</span> <span class="c-string">"main() called\n"</span><span class="c-op">;</span>
+<span class="c-preproc">#endif</span>
+    <span class="c-op">std::cout &lt;&lt;</span> <span class="c-fn">calculateSquare</span><span class="c-op">(</span><span class="c-number">5</span><span class="c-op">) &lt;&lt;</span> <span class="c-string">'\n'</span><span class="c-op">;</span>
+    <span class="c-keyword">return</span> <span class="c-number">0</span><span class="c-op">;</span>
+<span class="c-op">}</span></code></pre>
+      </div>
+
+      <div class="formula-box box">
+        <div class="box-title">✅ Advantages Over Raw Print Debugging</div>
+        <ul>
+          <li>Disable all debug output by commenting out <strong>one line</strong> (<code class="inline">#define ENABLE_DEBUG</code>)</li>
+          <li>Debug statements remain in your source code and are reusable immediately when needed again</li>
+          <li>No risk of accidentally shipping active debug output (just ensure the define is commented before release)</li>
+          <li>Zero runtime cost when disabled — the preprocessor removes the code before compilation</li>
+        </ul>
+      </div>
+
+      <div class="note-box box">
+        <div class="box-title">💡 How the Preprocessor Works Here</div>
+        <code class="inline">#ifdef ENABLE_DEBUG</code> means "if the macro <code class="inline">ENABLE_DEBUG</code> is defined, include this block." <code class="inline">#endif</code> marks the end of the conditional block. When you comment out <code class="inline">#define ENABLE_DEBUG</code>, the preprocessor removes all code between every <code class="inline">#ifdef</code>/<code class="inline">#endif</code> pair before the compiler even sees it.
+      </div>
+
+      <!-- LOGGER -->
+      <h3 id="s-35-logger">Tactic 2: Using a Logger</h3>
+      <div class="def-box box">
+        <div class="box-title">📖 Definition — Log / Logger</div>
+        A <strong>log</strong> is a sequential, time-stamped record of events, messages, and errors written to a file on disk (or to a monitoring system). A <strong>logger</strong> is the software component that produces this record.
+      </div>
+
+      <p><strong>Advantages of using a logger over direct <code class="inline">cerr</code> statements:</strong></p>
+      <ul>
+        <li><strong>Separation:</strong> Log output goes to a file, completely separate from the console UI. Users never see debug messages.</li>
+        <li><strong>Shareable:</strong> You can send a log file to a colleague or support engineer for analysis without them needing to run your code.</li>
+        <li><strong>Filterable Log Levels:</strong> Professional loggers support severity levels (e.g., <code class="inline">DEBUG</code>, <code class="inline">INFO</code>, <code class="inline">WARNING</code>, <code class="inline">ERROR</code>). You can configure the logger to only emit messages above a certain level — eliminating the need for <code class="inline">#ifdef</code> clutter throughout your code.</li>
+        <li><strong>Timestamps:</strong> Automatically records <em>when</em> each event occurred, essential for timing and ordering analysis.</li>
+      </ul>
+
+      <table>
+        <thead><tr><th>Logger Level</th><th>Use Case</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>DEBUG</td><td>Detailed dev-time info</td><td>"Entered function X with value Y"</td></tr>
+          <tr><td>INFO</td><td>Normal operational events</td><td>"User logged in"</td></tr>
+          <tr><td>WARNING</td><td>Unusual but handled conditions</td><td>"Config file not found, using defaults"</td></tr>
+          <tr><td>ERROR</td><td>Serious problems</td><td>"Failed to open database connection"</td></tr>
+          <tr><td>FATAL</td><td>Unrecoverable crash</td><td>"Out of memory — terminating"</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note-box box">
+        <div class="box-title">💡 Recommended Third-Party Loggers for C++</div>
+        Popular options: <strong>plog</strong>, <strong>spdlog</strong>, <strong>log4cpp</strong>. These are header-only or lightweight libraries that are far more powerful than manual logging. They are strongly preferred over rolling your own logger with <code class="inline">#ifdef</code> everywhere.
+      </div>
+
+      <div class="summary-strip">
+        <h4>§ 3.5 Summary</h4>
+        <div class="summary-items">
+          <span class="summary-pill">#ifdef guard = master switch</span>
+          <span class="summary-pill">Zero cost when disabled</span>
+          <span class="summary-pill">Logger = file-based, timestamped</span>
+          <span class="summary-pill">Log levels = filter verbosity</span>
+          <span class="summary-pill">Use plog / spdlog in real projects</span>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══════════════════ 3.6 ═══════════════════ -->
+    <section class="section" id="s-36">
+      <h2>3.6 — Using an Integrated Debugger: Stepping</h2>
+
+      <h3 id="s-36-state">What is Program State?</h3>
+      <div class="def-box box">
+        <div class="box-title">📖 Definition — Program State</div>
+        At any moment during execution, a program's <strong>state</strong> is the complete snapshot of everything it is currently tracking: all variable values, the current point of execution (which line is about to run), the call stack, and any other memory it holds. As each statement executes, the program state changes.
+      </div>
+
+      <div class="def-box box">
+        <div class="box-title">📖 Definition — Debugger</div>
+        A <strong>debugger</strong> is a specialized tool that lets you <strong>control the pace of program execution</strong> and <strong>inspect the program state</strong> at any point — without needing to add or remove any code. Modern IDEs (Visual Studio, VS Code, CLion, Code::Blocks) have a powerful integrated debugger.
+      </div>
+
+      <div class="warning-box box">
+        <div class="box-title">⚠️ Build Configuration Warning</div>
+        Your compiler must be set to a <strong>Debug build profile</strong>, not a Release profile. In a Release build, the compiler applies aggressive optimizations — reordering instructions, eliminating "unused" variables, inlining functions — which can make the debugger's behavior appear completely nonsensical. Always debug with a Debug build.
+      </div>
+
+      <h3 id="s-36-cmds">Stepping Commands</h3>
+      <p>Stepping commands let you execute your program one statement at a time, pausing after each one to inspect the state.</p>
+
+      <div class="cmd-grid">
+        <div class="cmd-card">
+          <div class="cmd-name"><span class="cmd-icon">⬇️</span> Step Into</div>
+          <div class="cmd-desc">Executes the current statement. If that statement contains a <strong>function call</strong>, execution jumps <em>into</em> the top of that function and pauses on its first line. Use this to examine what's happening inside a function.</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name"><span class="cmd-icon">➡️</span> Step Over</div>
+          <div class="cmd-desc">Executes the current statement. If that statement contains a <strong>function call</strong>, the function runs in its entirety in the background, and execution pauses on the <em>next line after</em> the function call. Use this to skip functions you trust are working correctly.</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name"><span class="cmd-icon">⬆️</span> Step Out</div>
+          <div class="cmd-desc">Executes <strong>all remaining statements</strong> in the current function, then pauses immediately after the function returns to its caller. Use this when you've seen enough of a function and want to quickly exit it.</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name"><span class="cmd-icon">⏪</span> Step Back</div>
+          <div class="cmd-desc"><strong>Reverse debugging</strong> — attempts to rewind execution to a previous program state. <em>Note: Not supported by all debuggers.</em> Currently unsupported in standard Visual Studio Community and Code::Blocks. Available in some configurations of GDB and specialized debuggers.</div>
+        </div>
+      </div>
+
+      <div class="note-box box">
+        <div class="box-title">💡 When to Use Which Step Command</div>
+        <ul>
+          <li>Use <strong>Step Into</strong> when you suspect a bug is <em>inside</em> the function being called</li>
+          <li>Use <strong>Step Over</strong> when you're confident the called function is correct and just want to move past it</li>
+          <li>Use <strong>Step Out</strong> when you accidentally stepped into a function you don't need to examine</li>
+          <li>Combine all three as needed — you can Step Into one call, Step Over a nested call, and Step Out when done</li>
+        </ul>
+      </div>
+
+      <div class="summary-strip">
+        <h4>§ 3.6 Summary</h4>
+        <div class="summary-items">
+          <span class="summary-pill">State = snapshot of everything</span>
+          <span class="summary-pill">Use Debug build profile!</span>
+          <span class="summary-pill">Step Into → enters function</span>
+          <span class="summary-pill">Step Over → skips function</span>
+          <span class="summary-pill">Step Out → exits current function</span>
+          <span class="summary-pill">Step Back = rarely supported</span>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══════════════════ 3.7 ═══════════════════ -->
+    <section class="section" id="s-37">
+      <h2>3.7 — Using an Integrated Debugger: Running and Breakpoints</h2>
+      <p>Stepping through a 10,000-line program one line at a time is impractical. These tools let you navigate quickly to the exact point of interest.</p>
+
+      <div class="cmd-grid">
+        <div class="cmd-card">
+          <div class="cmd-name"><span class="cmd-icon">🖱️</span> Run to Cursor</div>
+          <div class="cmd-desc">Place your cursor on any line, then invoke this command. The program executes normally at full speed until it reaches that specific line, then pauses. Great for jumping to a suspected area quickly. <em>Limitation: Only triggers once and doesn't catch lines inside loops on every iteration.</em></div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name"><span class="cmd-icon">▶️</span> Continue</div>
+          <div class="cmd-desc">When already paused in a debug session, resumes normal full-speed execution until the program finishes, crashes, or hits another breakpoint. Think of it as "unpause."</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name"><span class="cmd-icon">🚀</span> Start</div>
+          <div class="cmd-desc">Begins a new debugging session and runs the program at full speed immediately. Used at the very beginning. Without any breakpoints, the program will run to completion as normal.</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name"><span class="cmd-icon">🔴</span> Breakpoint</div>
+          <div class="cmd-desc">A persistent marker placed on a specific line. Every time execution reaches that line during a debug session, the debugger automatically pauses. Better than "Run to Cursor" because it persists across all visits to that line (critical for loops or recursion).</div>
+        </div>
+      </div>
+
+      <h3>Breakpoints In Detail</h3>
+      <p>Breakpoints are the most powerful navigation tool available. You can:</p>
+      <ul>
+        <li><strong>Set multiple breakpoints</strong> simultaneously at different locations</li>
+        <li><strong>Enable/disable</strong> individual breakpoints without removing them</li>
+        <li><strong>Conditional breakpoints:</strong> Some IDEs let you set a condition — the breakpoint only pauses execution when a specified condition is true (e.g., only pause when <code class="inline">i == 42</code>)</li>
+        <li><strong>Hit count breakpoints:</strong> Pause only on the Nth visit to a line</li>
+      </ul>
+
+      <h3>Set Next Statement (Jumping)</h3>
+      <div class="def-box box">
+        <div class="box-title">📖 Set Next Statement</div>
+        This command changes the <strong>execution pointer</strong> — the marker indicating which line will run next — to a different line, without executing any code in between.
+      </div>
+
+      <div class="danger-box box">
+        <div class="box-title">🚫 Critical Warning — Jumping is NOT Step Back</div>
+        <ul>
+          <li>Jumping <strong>only moves the execution marker</strong>. It does NOT restore the program state.</li>
+          <li>If you jump <em>backward</em> over code that modified a variable, that variable retains its modified value — the assignment is NOT undone.</li>
+          <li>This is fundamentally different from Step Back, which actually reverses state.</li>
+          <li><strong>Never jump into a different function</strong> — the call stack will be in an inconsistent state and the program will almost certainly crash.</li>
+          <li>Use jumping carefully, mostly to skip code you've already inspected or to re-execute a section with different inputs.</li>
+        </ul>
+      </div>
+
+      <div class="summary-strip">
+        <h4>§ 3.7 Summary</h4>
+        <div class="summary-items">
+          <span class="summary-pill">Run to Cursor = one-time jump</span>
+          <span class="summary-pill">Breakpoint = persistent, repeats</span>
+          <span class="summary-pill">Continue = resume execution</span>
+          <span class="summary-pill">Jumping ≠ Step Back</span>
+          <span class="summary-pill">Don't jump between functions</span>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══════════════════ 3.8 ═══════════════════ -->
+    <section class="section" id="s-38">
+      <h2>3.8 — Using an Integrated Debugger: Watching Variables</h2>
+      <p>The ability to pause execution is only half the value of a debugger. The other half is being able to inspect the actual values of variables at that paused moment.</p>
+
+      <div class="cmd-grid">
+        <div class="cmd-card">
+          <div class="cmd-name"><span class="cmd-icon">🖱️</span> Hover / QuickWatch</div>
+          <div class="cmd-desc">While paused in the debugger, hover your mouse cursor over any variable name in the source code. A tooltip will pop up showing that variable's current value. Quick and convenient for one-off checks.</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name"><span class="cmd-icon">👁️</span> Watch Window</div>
+          <div class="cmd-desc">A dedicated UI panel where you manually type variable names to add them to a persistent "watchlist." The window continuously updates their values as you step through the program. You can also right-click a variable in source code and select "Add Watch."</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name"><span class="cmd-icon">🧮</span> Expression Evaluation</div>
+          <div class="cmd-desc">The Watch Window doesn't just display variable names — you can type arbitrary expressions. For example, typing <code class="inline">x + y * 2</code> will evaluate and display the result based on current values. Useful for testing calculations without modifying code.</div>
+        </div>
+        <div class="cmd-card">
+          <div class="cmd-name"><span class="cmd-icon">⚡</span> Break on Value Change</div>
+          <div class="cmd-desc">Some debuggers allow you to right-click a watched variable and set a special breakpoint that triggers <em>only when that variable's value changes</em>. Invaluable for tracking down where a value is unexpectedly being modified.</div>
+        </div>
+      </div>
+
+      <h3>The Locals Window</h3>
+      <div class="def-box box">
+        <div class="box-title">📖 Locals Window</div>
+        A specialized Watch Window variant that <strong>automatically lists all local variables currently in scope</strong> for the active function — you don't need to add them manually. As you step into/out of functions, the Locals window updates to reflect the variables of the current scope. Essential for quickly getting an overview of the current function's state.
+      </div>
+
+      <div class="note-box box">
+        <div class="box-title">💡 Watch Window Strategy</div>
+        Use the <strong>Locals Window</strong> for a quick overview of all current variables. Switch to a dedicated <strong>Watch Window</strong> when you want to track a specific variable across multiple function calls (since it persists across scope changes, even when the variable briefly goes out of scope). Use <strong>expression evaluation</strong> to test fix hypotheses without changing any code.
+      </div>
+
+      <div class="summary-strip">
+        <h4>§ 3.8 Summary</h4>
+        <div class="summary-items">
+          <span class="summary-pill">Hover = quick single value</span>
+          <span class="summary-pill">Watch Window = persistent tracking</span>
+          <span class="summary-pill">Evaluate expressions live</span>
+          <span class="summary-pill">Break on value change</span>
+          <span class="summary-pill">Locals = auto-list current scope</span>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══════════════════ 3.9 ═══════════════════ -->
+    <section class="section" id="s-39">
+      <h2>3.9 — Using an Integrated Debugger: The Call Stack</h2>
+
+      <h3>What is the Call Stack?</h3>
+      <div class="def-box box">
+        <div class="box-title">📖 Definition — Call Stack</div>
+        The <strong>call stack</strong> is a runtime data structure that tracks all active function calls — the sequence of functions that were called to reach the current point of execution. It operates as a <strong>LIFO (Last In, First Out)</strong> stack: the most recently called function is at the top; the program entry point (<code class="inline">main</code>) is at the bottom.
+      </div>
+
+      <h3>How the Call Stack Works</h3>
+      <ul>
+        <li>When a function is <strong>called</strong>, a <em>stack frame</em> (containing local variables, return address, and other info) is <strong>pushed onto the top</strong> of the stack</li>
+        <li>When a function <strong>returns</strong>, its frame is <strong>popped off the top</strong>, and execution resumes in the function below it</li>
+        <li>The call stack grows downward as functions call more functions and shrinks as they return</li>
+      </ul>
+
+      <h3>The Call Stack Window</h3>
+      <p>Your IDE's <strong>Call Stack Window</strong> displays the call stack in real time while paused in the debugger. It shows you the exact path of function calls that led to your current breakpoint, which is invaluable for understanding complex execution flows.</p>
+
+      <p>You can also <strong>click on any frame</strong> in the Call Stack Window to jump to that function's context — viewing its local variables and source code position.</p>
+
+      <h3>Visualizing the Call Stack — Quiz Q3 Example</h3>
+      <p>Consider this execution flow: <code class="inline">main</code> → calls <code class="inline">a</code> → calls <code class="inline">b</code> → calls <code class="inline">c</code> (returns) → calls <code class="inline">d</code> (paused here):</p>
+
+      <div class="call-stack">
+        <div style="font-size:12px; color:#888; margin-bottom:4px;">← TOP (Most Recently Called)</div>
+        <div class="stack-frame stack-top">
+          d()
+          <span class="stack-label">← Currently executing (paused)</span>
+        </div>
+        <div class="stack-arrow">↕</div>
+        <div class="stack-frame stack-mid">b()</div>
+        <div class="stack-arrow">↕</div>
+        <div class="stack-frame stack-mid">a()</div>
+        <div class="stack-arrow">↕</div>
+        <div class="stack-frame stack-bottom">main()</div>
+        <div style="font-size:12px; color:#888; margin-top:4px;">← BOTTOM (Program Entry Point)</div>
+      </div>
+
+      <div class="note-box box">
+        <div class="box-title">💡 Why c() is NOT in the Stack</div>
+        Notice that <code class="inline">c()</code> does not appear in the call stack. Function <code class="inline">b()</code> called <code class="inline">c()</code> first, but <code class="inline">c()</code> completed and returned before <code class="inline">d()</code> was called. A function only appears in the call stack while it is actively executing. Once it returns, it is removed.
+      </div>
+
+      <div class="danger-box box">
+        <div class="box-title">🚫 Stack Overflow</div>
+        The call stack has a finite size. If functions call other functions infinitely (especially with unbounded recursion), the stack runs out of space — this is called a <strong>stack overflow</strong>, causing an immediate crash. This is a run-time semantic error.
+      </div>
+
+      <div class="summary-strip">
+        <h4>§ 3.9 Summary</h4>
+        <div class="summary-items">
+          <span class="summary-pill">LIFO — last in, first out</span>
+          <span class="summary-pill">Push on call, pop on return</span>
+          <span class="summary-pill">Shows execution path to current point</span>
+          <span class="summary-pill">Returned functions are removed</span>
+          <span class="summary-pill">Click frame to inspect its context</span>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══════════════════ 3.10 ═══════════════════ -->
+    <section class="section" id="s-310">
+      <h2>3.10 — Finding Issues Before They Become Problems</h2>
+      <p>The absolute best debugging technique is to prevent bugs from existing in the first place. Here are the key strategies:</p>
+
+      <h3>1. Don't Make Errors — Best Practices</h3>
+      <ul>
+        <li>Don't program when tired or distracted — tired programmers make careless mistakes</li>
+        <li>Keep functions <strong>short and focused</strong> (rule of thumb: &lt;10 lines per function)</li>
+        <li>Use the <strong>C++ standard library</strong> — it's heavily tested and debugged by experts; reinventing it introduces bugs</li>
+        <li><strong>Comment your code</strong> — explain <em>why</em>, not just <em>what</em>. Future-you (and colleagues) will thank you</li>
+        <li>Prioritize <strong>readability over cleverness</strong> — a clever one-liner that hides a bug is far worse than a readable five-liner</li>
+      </ul>
+
+      <h3>2. Refactoring</h3>
+      <div class="def-box box">
+        <div class="box-title">📖 Definition — Refactoring</div>
+        <strong>Refactoring</strong> is the process of restructuring existing code — breaking long functions into smaller ones, renaming variables for clarity, reorganizing code layout — <strong>without changing the program's external behavior</strong>. You change the structure, not the output.
+      </div>
+
+      <div class="warning-box box">
+        <div class="box-title">⚠️ The Golden Rule of Refactoring</div>
+        <strong>Never change behavior and structure at the same time.</strong> If you refactor AND add a feature simultaneously, and a bug appears, you won't know which change caused it. Refactor first, test that behavior is unchanged, then add features.
+      </div>
+
+      <p>Benefits of refactoring: smaller functions are easier to test, understand, debug, and reuse.</p>
+
+      <h3>3. Defensive Programming</h3>
+      <div class="def-box box">
+        <div class="box-title">📖 Definition — Defensive Programming</div>
+        <strong>Defensive programming</strong> means writing code that anticipates and handles all the ways it could be misused — by users, by other developers, or by system conditions. Assume input is always potentially invalid and write code to handle those cases gracefully.
+      </div>
+
+      <p><strong>Examples of defensive programming:</strong></p>
+      <ul>
+        <li>Check that a denominator is not zero before dividing</li>
+        <li>Validate that user input is within expected range before processing</li>
+        <li>Check that file pointers are valid before reading from them</li>
+        <li>Validate function arguments at the start of the function body</li>
+      </ul>
+
+      <h3>4. Unit Testing</h3>
+      <div class="def-box box">
+        <div class="box-title">📖 Definition — Unit Testing</div>
+        <strong>Unit testing</strong> involves writing small, focused test functions that call your code with a variety of inputs and verify that the outputs match expected values. Each "unit" (typically a function) is tested in isolation.
+      </div>
+
+      <p>Unit tests act as a safety net — when you refactor or extend your code, running your tests immediately reveals if anything broke. They also serve as living documentation of how functions are expected to behave.</p>
+
+      <div class="code-block-wrapper">
+        <div class="code-header">
+          <div class="code-dots">
+            <div class="dot dot-orange"></div>
+            <div class="dot dot-purple"></div>
+            <div class="dot dot-white"></div>
+          </div>
+          <span class="code-filename">unit_test_example.cpp</span>
+        </div>
+        <pre><code><span class="c-preproc">#include</span> <span class="c-string">&lt;cassert&gt;</span>
+
+<span class="c-type">int</span> <span class="c-fn">add</span><span class="c-op">(</span><span class="c-type">int</span> <span class="c-op">a,</span> <span class="c-type">int</span> <span class="c-op">b) {</span> <span class="c-keyword">return</span> <span class="c-op">a + b;</span> <span class="c-op">}</span>
+
+<span class="c-type">void</span> <span class="c-fn">testAdd</span><span class="c-op">() {</span>
+    <span class="c-fn">assert</span><span class="c-op">(</span><span class="c-fn">add</span><span class="c-op">(</span><span class="c-number">2</span><span class="c-op">,</span> <span class="c-number">3</span><span class="c-op">) ==</span> <span class="c-number">5</span><span class="c-op">);</span>    <span class="c-comment">// Basic case</span>
+    <span class="c-fn">assert</span><span class="c-op">(</span><span class="c-fn">add</span><span class="c-op">(</span><span class="c-number">0</span><span class="c-op">,</span> <span class="c-number">0</span><span class="c-op">) ==</span> <span class="c-number">0</span><span class="c-op">);</span>    <span class="c-comment">// Zero case</span>
+    <span class="c-fn">assert</span><span class="c-op">(</span><span class="c-fn">add</span><span class="c-op">(-</span><span class="c-number">1</span><span class="c-op">,</span> <span class="c-number">1</span><span class="c-op">) ==</span> <span class="c-number">0</span><span class="c-op">);</span>  <span class="c-comment">// Negative + positive</span>
+    <span class="c-fn">assert</span><span class="c-op">(</span><span class="c-fn">add</span><span class="c-op">(-</span><span class="c-number">3</span><span class="c-op">, -</span><span class="c-number">2</span><span class="c-op">) == -</span><span class="c-number">5</span><span class="c-op">);</span> <span class="c-comment">// Both negative</span>
+<span class="c-op">}</span>
+
+<span class="c-type">int</span> <span class="c-fn">main</span><span class="c-op">() {</span>
+    <span class="c-fn">testAdd</span><span class="c-op">();</span>  <span class="c-comment">// Run tests — crashes with assert failure if any test fails</span>
+    <span class="c-keyword">return</span> <span class="c-number">0</span><span class="c-op">;</span>
+<span class="c-op">}</span></code></pre>
+      </div>
+
+      <h3>5. Constraints with <code class="inline">assert</code></h3>
+      <div class="def-box box">
+        <div class="box-title">📖 Definition — assert</div>
+        <code class="inline">assert(expression)</code> is a macro from <code class="inline">&lt;cassert&gt;</code>. If <code class="inline">expression</code> evaluates to <code class="inline">false</code>, <code class="inline">assert</code> immediately terminates the program with an error message indicating the file, line number, and failed expression. It enforces assumptions your code makes.
+      </div>
+
+      <div class="code-block-wrapper">
+        <div class="code-header">
+          <div class="code-dots">
+            <div class="dot dot-orange"></div>
+            <div class="dot dot-purple"></div>
+            <div class="dot dot-white"></div>
+          </div>
+          <span class="code-filename">assert_example.cpp</span>
+        </div>
+        <pre><code><span class="c-preproc">#include</span> <span class="c-string">&lt;cassert&gt;</span>
+
+<span class="c-type">int</span> <span class="c-fn">factorial</span><span class="c-op">(</span><span class="c-type">int</span> <span class="c-op">n) {</span>
+    <span class="c-fn">assert</span><span class="c-op">(n &gt;=</span> <span class="c-number">0</span><span class="c-op">);</span>  <span class="c-comment">// Constraint: factorial of negative number is undefined</span>
+    <span class="c-keyword">if</span> <span class="c-op">(n ==</span> <span class="c-number">0</span><span class="c-op">)</span> <span class="c-keyword">return</span> <span class="c-number">1</span><span class="c-op">;</span>
+    <span class="c-keyword">return</span> <span class="c-op">n *</span> <span class="c-fn">factorial</span><span class="c-op">(n -</span> <span class="c-number">1</span><span class="c-op">);</span>
+<span class="c-op">}</span></code></pre>
+      </div>
+
+      <div class="note-box box">
+        <div class="box-title">💡 Assert vs Error Handling</div>
+        Use <code class="inline">assert</code> to catch <em>programmer errors</em> (violated assumptions that should never happen in correct code). Use proper error handling (exceptions, return codes) for <em>user errors</em> or conditions that can legitimately occur at runtime (like a file not being found). Asserts are typically disabled in Release builds (when <code class="inline">NDEBUG</code> is defined).
+      </div>
+
+      <h3>6. Static Analysis Tools (Linters)</h3>
+      <div class="def-box box">
+        <div class="box-title">📖 Definition — Static Analysis</div>
+        <strong>Static analysis</strong> is the process of analyzing source code <strong>without running it</strong>, to detect potential bugs, style violations, and non-compliant practices. Tools that perform static analysis are called <strong>linters</strong>.
+      </div>
+
+      <table>
+        <thead><tr><th>Tool</th><th>Type</th><th>What It Catches</th></tr></thead>
+        <tbody>
+          <tr><td>Your Compiler</td><td>Built-in (basic)</td><td>Type mismatches, unused variables (with -Wall -Wextra)</td></tr>
+          <tr><td>clang-tidy</td><td>External linter</td><td>Hundreds of C++ best-practice violations, performance issues</td></tr>
+          <tr><td>cppcheck</td><td>External linter</td><td>Memory leaks, null pointer dereferences, buffer overflows</td></tr>
+          <tr><td>PVS-Studio</td><td>Commercial linter</td><td>Comprehensive semantic analysis</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note-box box">
+        <div class="box-title">💡 Enable All Compiler Warnings</div>
+        Your compiler is already a basic static analyzer. Always compile with <code class="inline">-Wall -Wextra -Wpedantic</code> (GCC/Clang) or <code class="inline">/W4</code> (MSVC) to enable comprehensive warnings. Treat every warning as an error until you understand it. Many bugs are caught this way before they ever manifest at runtime.
+      </div>
+
+      <div class="summary-strip">
+        <h4>§ 3.10 Summary</h4>
+        <div class="summary-items">
+          <span class="summary-pill">Prevention > debugging</span>
+          <span class="summary-pill">Keep functions &lt;10 lines</span>
+          <span class="summary-pill">Refactor = structure, not behavior</span>
+          <span class="summary-pill">Defensive = validate all inputs</span>
+          <span class="summary-pill">assert = enforce assumptions</span>
+          <span class="summary-pill">Unit tests = safety net</span>
+          <span class="summary-pill">Static analysis = -Wall -Wextra</span>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══════════════════ QUIZ ═══════════════════ -->
+    <section class="section" id="s-quiz">
+      <h2>Quiz Solutions — Full Annotated Explanations</h2>
+      <p>Each quiz question is analyzed with: the bug identified, the root cause explained, and a fully corrected solution with commentary.</p>
+
+      <!-- Q1 -->
+      <div class="quiz-card" id="s-q1">
+        <div class="quiz-header">
+          <span>Question #1</span>
+          <span class="quiz-badge">Addition Bug</span>
+        </div>
+        <div class="quiz-body">
+          <h4>Problem Statement</h4>
+          <p>This program is supposed to read two numbers and print their sum. The output is incorrect. Find and fix the bug using the integrated debugger.</p>
+
+          <div class="code-block-wrapper">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="dot dot-orange"></div><div class="dot dot-purple"></div><div class="dot dot-white"></div>
+              </div>
+              <span class="code-filename">q1_buggy.cpp</span>
+            </div>
+            <pre><code><span class="c-preproc">#include</span> <span class="c-string">&lt;iostream&gt;</span>
+
+<span class="c-type">int</span> <span class="c-fn">readNumber</span><span class="c-op">(</span><span class="c-type">int</span> <span class="c-op">x)</span>  <span class="c-comment">// ❌ BUG: Takes x by value — caller's x is unaffected</span>
+<span class="c-op">{</span>
+    <span class="c-op">std::cout &lt;&lt;</span> <span class="c-string">"Please enter a number: "</span><span class="c-op">;</span>
+    <span class="c-op">std::cin &gt;&gt; x;</span>
+    <span class="c-keyword">return</span> <span class="c-op">x;</span>
+<span class="c-op">}</span>
+
+<span class="c-type">void</span> <span class="c-fn">writeAnswer</span><span class="c-op">(</span><span class="c-type">int</span> <span class="c-op">x)</span>
+<span class="c-op">{</span>
+    <span class="c-op">std::cout &lt;&lt;</span> <span class="c-string">"The sum is: "</span> <span class="c-op">&lt;&lt; x &lt;&lt;</span> <span class="c-string">'\n'</span><span class="c-op">;</span>
+<span class="c-op">}</span>
+
+<span class="c-type">int</span> <span class="c-fn">main</span><span class="c-op">()</span>
+<span class="c-op">{</span>
+    <span class="c-type">int</span> <span class="c-op">x {};</span>
+    <span class="c-fn">readNumber</span><span class="c-op">(x);</span>        <span class="c-comment">// ❌ Return value discarded! x in main stays 0</span>
+    <span class="c-op">x = x +</span> <span class="c-fn">readNumber</span><span class="c-op">(x);</span>  <span class="c-comment">// x (0) + second input = only second input</span>
+    <span class="c-fn">writeAnswer</span><span class="c-op">(x);</span>
+    <span class="c-keyword">return</span> <span class="c-number">0</span><span class="c-op">;</span>
+<span class="c-op">}</span></code></pre>
+          </div>
+
+          <div class="danger-box box">
+            <div class="box-title">🐛 Root Cause Analysis</div>
+            <p><strong>Two interrelated bugs:</strong></p>
+            <ol>
+              <li><code class="inline">readNumber(int x)</code> takes <code class="inline">x</code> <strong>by value</strong>. When called as <code class="inline">readNumber(x)</code> from <code class="inline">main</code>, a <em>copy</em> of <code class="inline">main</code>'s <code class="inline">x</code> is made. The function modifies and returns this copy. The original <code class="inline">x</code> in <code class="inline">main</code> is never touched.</li>
+              <li>The first call <code class="inline">readNumber(x)</code> does return the user's input, but the return value is <strong>completely ignored</strong> — there is no assignment capturing it. So <code class="inline">x</code> in <code class="inline">main</code> remains <code class="inline">0</code>.</li>
+              <li>The second call computes <code class="inline">x (which is 0) + second_input = second_input only</code>. The first number is lost entirely.</li>
+            </ol>
+          </div>
+
+          <div class="code-block-wrapper">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="dot dot-orange"></div><div class="dot dot-purple"></div><div class="dot dot-white"></div>
+              </div>
+              <span class="code-filename">q1_fixed.cpp</span>
+            </div>
+            <pre><code><span class="c-preproc">#include</span> <span class="c-string">&lt;iostream&gt;</span>
+
+<span class="c-comment">// ✅ FIX: No parameter needed — declare x locally inside the function</span>
+<span class="c-type">int</span> <span class="c-fn">readNumber</span><span class="c-op">()</span>
+<span class="c-op">{</span>
+    <span class="c-op">std::cout &lt;&lt;</span> <span class="c-string">"Please enter a number: "</span><span class="c-op">;</span>
+    <span class="c-type">int</span> <span class="c-op">x{};</span>
+    <span class="c-op">std::cin &gt;&gt; x;</span>
+    <span class="c-keyword">return</span> <span class="c-op">x;</span>
+<span class="c-op">}</span>
+
+<span class="c-type">void</span> <span class="c-fn">writeAnswer</span><span class="c-op">(</span><span class="c-type">int</span> <span class="c-op">x)</span>
+<span class="c-op">{</span>
+    <span class="c-op">std::cout &lt;&lt;</span> <span class="c-string">"The sum is: "</span> <span class="c-op">&lt;&lt; x &lt;&lt;</span> <span class="c-string">'\n'</span><span class="c-op">;</span>
+<span class="c-op">}</span>
+
+<span class="c-type">int</span> <span class="c-fn">main</span><span class="c-op">()</span>
+<span class="c-op">{</span>
+    <span class="c-comment">// ✅ FIX: Capture the return value of the first call</span>
+    <span class="c-type">int</span> <span class="c-op">x {</span> <span class="c-fn">readNumber</span><span class="c-op">() };</span>  <span class="c-comment">// First number stored in x</span>
+    <span class="c-op">x = x +</span> <span class="c-fn">readNumber</span><span class="c-op">();</span>     <span class="c-comment">// Add second number to first</span>
+    <span class="c-fn">writeAnswer</span><span class="c-op">(x);</span>
+    <span class="c-keyword">return</span> <span class="c-number">0</span><span class="c-op">;</span>
+<span class="c-op">}</span></code></pre>
+          </div>
+
+          <div class="success-box box">
+            <div class="box-title">✅ Key Lessons</div>
+            <ul>
+              <li><strong>Pass by value creates a copy</strong> — modifying it does NOT affect the original. The fix here is to remove the parameter entirely and declare <code class="inline">x</code> locally.</li>
+              <li><strong>Always capture return values</strong> when you need the result. A function call whose return value is silently discarded is almost always a bug.</li>
+              <li>Stepping through with the debugger and watching <code class="inline">x</code> in <code class="inline">main</code> would immediately show it remains <code class="inline">0</code> after the first call.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="quiz-card" id="s-q2">
+        <div class="quiz-header">
+          <span>Question #2</span>
+          <span class="quiz-badge">Division Bug</span>
+        </div>
+        <div class="quiz-body">
+          <h4>Problem Statement</h4>
+          <p>This program is supposed to divide two numbers (inputs: 8 and 4, expected: 2). It crashes. Find and fix the bug.</p>
+
+          <div class="code-block-wrapper">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="dot dot-orange"></div><div class="dot dot-purple"></div><div class="dot dot-white"></div>
+              </div>
+              <span class="code-filename">q2_buggy.cpp</span>
+            </div>
+            <pre><code><span class="c-preproc">#include</span> <span class="c-string">&lt;iostream&gt;</span>
+
+<span class="c-type">int</span> <span class="c-fn">readNumber</span><span class="c-op">() { ... }</span>  <span class="c-comment">// (same as before, correct)</span>
+<span class="c-type">void</span> <span class="c-fn">writeAnswer</span><span class="c-op">(</span><span class="c-type">int</span> <span class="c-op">x) { ... }</span>
+
+<span class="c-type">int</span> <span class="c-fn">main</span><span class="c-op">()</span>
+<span class="c-op">{</span>
+    <span class="c-type">int</span> <span class="c-op">x{ };</span>
+    <span class="c-type">int</span> <span class="c-op">y{ };</span>          <span class="c-comment">// y initialized to 0</span>
+    <span class="c-op">x =</span> <span class="c-fn">readNumber</span><span class="c-op">();</span>  <span class="c-comment">// First input → x ✅</span>
+    <span class="c-op">x =</span> <span class="c-fn">readNumber</span><span class="c-op">();</span>  <span class="c-comment">// ❌ BUG: Should be y = ..., but overwrites x!</span>
+    <span class="c-fn">writeAnswer</span><span class="c-op">(x / y);</span> <span class="c-comment">// ❌ BUG: y is still 0 → division by zero → CRASH</span>
+    <span class="c-keyword">return</span> <span class="c-number">0</span><span class="c-op">;</span>
+<span class="c-op">}</span></code></pre>
+          </div>
+
+          <div class="danger-box box">
+            <div class="box-title">🐛 Root Cause Analysis</div>
+            <ol>
+              <li><strong>Line 20 (original):</strong> <code class="inline">x = readNumber();</code> correctly gets the first number into <code class="inline">x</code>.</li>
+              <li><strong>Line 21 (original):</strong> <code class="inline">x = readNumber();</code> — the programmer typed <code class="inline">x</code> instead of <code class="inline">y</code>. This <em>overwrites</em> the first number, and <code class="inline">y</code> is never assigned.</li>
+              <li><code class="inline">y</code> was initialized to <code class="inline">0</code> via <code class="inline">int y{}</code> and stays <code class="inline">0</code>.</li>
+              <li><code class="inline">x / y</code> = <code class="inline">8 / 0</code> = <strong>division by zero</strong> → undefined behavior → crash.</li>
+            </ol>
+          </div>
+
+          <div class="code-block-wrapper">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="dot dot-orange"></div><div class="dot dot-purple"></div><div class="dot dot-white"></div>
+              </div>
+              <span class="code-filename">q2_fixed.cpp</span>
+            </div>
+            <pre><code><span class="c-preproc">#include</span> <span class="c-string">&lt;iostream&gt;</span>
+
+<span class="c-type">int</span> <span class="c-fn">readNumber</span><span class="c-op">() {</span>
+    <span class="c-op">std::cout &lt;&lt;</span> <span class="c-string">"Please enter a number: "</span><span class="c-op">;</span>
+    <span class="c-type">int</span> <span class="c-op">x{};</span>
+    <span class="c-op">std::cin &gt;&gt; x;</span>
+    <span class="c-keyword">return</span> <span class="c-op">x;</span>
+<span class="c-op">}</span>
+
+<span class="c-type">void</span> <span class="c-fn">writeAnswer</span><span class="c-op">(</span><span class="c-type">int</span> <span class="c-op">quotient)</span>
+<span class="c-op">{</span>
+    <span class="c-op">std::cout &lt;&lt;</span> <span class="c-string">"The quotient is: "</span> <span class="c-op">&lt;&lt; quotient &lt;&lt;</span> <span class="c-string">'\n'</span><span class="c-op">;</span>
+<span class="c-op">}</span>
+
+<span class="c-type">int</span> <span class="c-fn">main</span><span class="c-op">()</span>
+<span class="c-op">{</span>
+    <span class="c-type">int</span> <span class="c-op">x {</span> <span class="c-fn">readNumber</span><span class="c-op">() };</span>  <span class="c-comment">// ✅ First number → x (using initializer, cleaner)</span>
+    <span class="c-type">int</span> <span class="c-op">y {</span> <span class="c-fn">readNumber</span><span class="c-op">() };</span>  <span class="c-comment">// ✅ FIX: Second number → y (not x!)</span>
+    <span class="c-fn">writeAnswer</span><span class="c-op">(x / y);</span>         <span class="c-comment">// ✅ Now y is 4, not 0. Result: 2 ✅</span>
+    <span class="c-keyword">return</span> <span class="c-number">0</span><span class="c-op">;</span>
+<span class="c-op">}</span></code></pre>
+          </div>
+
+          <div class="success-box box">
+            <div class="box-title">✅ Key Lessons</div>
+            <ul>
+              <li>A simple variable name typo (<code class="inline">x</code> instead of <code class="inline">y</code>) caused a complete program crash.</li>
+              <li>Using the <strong>Locals Window</strong> or <strong>Watch Window</strong> while stepping would immediately reveal that <code class="inline">y</code> remains <code class="inline">0</code> before the division.</li>
+              <li>Prefer <strong>initialization over assignment</strong> (<code class="inline">int x { readNumber() };</code>) — it makes the intent clear and reduces the chance of this type of bug.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="quiz-card" id="s-q3">
+        <div class="quiz-header">
+          <span>Question #3</span>
+          <span class="quiz-badge">Call Stack Analysis</span>
+        </div>
+        <div class="quiz-body">
+          <h4>Problem Statement</h4>
+          <p>What does the call stack look like when execution is paused on line 4 (inside function <code class="inline">d</code>)?</p>
+
+          <div class="code-block-wrapper">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="dot dot-orange"></div><div class="dot dot-purple"></div><div class="dot dot-white"></div>
+              </div>
+              <span class="code-filename">q3_call_stack.cpp</span>
+            </div>
+            <pre><code><span class="c-preproc">#include</span> <span class="c-string">&lt;iostream&gt;</span>
+
+<span class="c-type">void</span> <span class="c-fn">d</span><span class="c-op">() {</span>
+    <span class="c-comment">// &lt;-- Execution is paused HERE (line 4)</span>
+<span class="c-op">}</span>
+
+<span class="c-type">void</span> <span class="c-fn">c</span><span class="c-op">() { }</span>  <span class="c-comment">// c() was called first by b(), then returned. NOT in stack now.</span>
+
+<span class="c-type">void</span> <span class="c-fn">b</span><span class="c-op">() {</span>
+    <span class="c-fn">c</span><span class="c-op">();</span>  <span class="c-comment">// c() called and returned (popped off stack)</span>
+    <span class="c-fn">d</span><span class="c-op">();</span>  <span class="c-comment">// d() called and is currently executing</span>
+<span class="c-op">}</span>
+
+<span class="c-type">void</span> <span class="c-fn">a</span><span class="c-op">() {</span>
+    <span class="c-fn">b</span><span class="c-op">();</span>
+<span class="c-op">}</span>
+
+<span class="c-type">int</span> <span class="c-fn">main</span><span class="c-op">() {</span>
+    <span class="c-fn">a</span><span class="c-op">();</span>
+    <span class="c-keyword">return</span> <span class="c-number">0</span><span class="c-op">;</span>
+<span class="c-op">}</span></code></pre>
+          </div>
+
+          <h4>Execution Trace</h4>
+          <ol>
+            <li><code class="inline">main()</code> begins → pushed to stack</li>
+            <li><code class="inline">main</code> calls <code class="inline">a()</code> → pushed to stack</li>
+            <li><code class="inline">a</code> calls <code class="inline">b()</code> → pushed to stack</li>
+            <li><code class="inline">b</code> calls <code class="inline">c()</code> → pushed to stack; <code class="inline">c</code> immediately returns → <strong>popped from stack</strong></li>
+            <li><code class="inline">b</code> calls <code class="inline">d()</code> → pushed to stack; execution pauses here</li>
+          </ol>
+
+          <h4>Call Stack at Pause Point</h4>
+          <div class="call-stack">
+            <div style="font-size:12px; color:#888; margin-bottom:4px;">← TOP</div>
+            <div class="stack-frame stack-top">d() <span class="stack-label">← Paused here</span></div>
+            <div class="stack-arrow">↕</div>
+            <div class="stack-frame stack-mid">b()</div>
+            <div class="stack-arrow">↕</div>
+            <div class="stack-frame stack-mid">a()</div>
+            <div class="stack-arrow">↕</div>
+            <div class="stack-frame stack-bottom">main()</div>
+            <div style="font-size:12px; color:#888; margin-top:4px;">← BOTTOM</div>
+          </div>
+
+          <div class="success-box box">
+            <div class="box-title">✅ Answer</div>
+            <p>The call stack from bottom to top: <code class="inline">main</code> → <code class="inline">a</code> → <code class="inline">b</code> → <code class="inline">d</code></p>
+            <p><strong>Why isn't <code class="inline">c()</code> in the stack?</strong> Because <code class="inline">c()</code> fully completed and returned <em>before</em> <code class="inline">d()</code> was called. A function only occupies the call stack while it is actively executing.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="quiz-card" id="s-q4">
+        <div class="quiz-header">
+          <span>Question #4 (Extra Credit)</span>
+          <span class="quiz-badge">char vs int Bug</span>
+        </div>
+        <div class="quiz-body">
+          <h4>Problem Statement</h4>
+          <p>This program should add two numbers (inputs: 8 and 4, expected: 12). Instead, it outputs 108. Find and fix the bug.</p>
+
+          <div class="code-block-wrapper">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="dot dot-orange"></div><div class="dot dot-purple"></div><div class="dot dot-white"></div>
+              </div>
+              <span class="code-filename">q4_buggy.cpp</span>
+            </div>
+            <pre><code><span class="c-preproc">#include</span> <span class="c-string">&lt;iostream&gt;</span>
+
+<span class="c-type">int</span> <span class="c-fn">readNumber</span><span class="c-op">() {</span>
+    <span class="c-op">std::cout &lt;&lt;</span> <span class="c-string">"Please enter a number: "</span><span class="c-op">;</span>
+    <span class="c-type">char</span> <span class="c-op">x{};</span>  <span class="c-comment">// ❌ BUG: char, not int! Reads a CHARACTER, not a number</span>
+    <span class="c-op">std::cin &gt;&gt; x;</span>
+    <span class="c-keyword">return</span> <span class="c-op">x;</span>  <span class="c-comment">// Returns ASCII value of the character!</span>
+<span class="c-op">}</span>
+
+<span class="c-type">void</span> <span class="c-fn">writeAnswer</span><span class="c-op">(</span><span class="c-type">int</span> <span class="c-op">x) {</span>
+    <span class="c-op">std::cout &lt;&lt;</span> <span class="c-string">"The sum is: "</span> <span class="c-op">&lt;&lt; x &lt;&lt;</span> <span class="c-string">'\n'</span><span class="c-op">;</span>
+<span class="c-op">}</span>
+
+<span class="c-type">int</span> <span class="c-fn">main</span><span class="c-op">() {</span>
+    <span class="c-type">int</span> <span class="c-op">x {</span> <span class="c-fn">readNumber</span><span class="c-op">() };</span>
+    <span class="c-type">int</span> <span class="c-op">y {</span> <span class="c-fn">readNumber</span><span class="c-op">() };</span>
+    <span class="c-fn">writeAnswer</span><span class="c-op">(x + y);</span>
+    <span class="c-keyword">return</span> <span class="c-number">0</span><span class="c-op">;</span>
+<span class="c-op">}</span></code></pre>
+          </div>
+
+          <div class="danger-box box">
+            <div class="box-title">🐛 Root Cause Analysis — ASCII Explained</div>
+            <p>The variable <code class="inline">x</code> inside <code class="inline">readNumber()</code> is declared as <code class="inline">char</code>, not <code class="inline">int</code>. When the user types <code class="inline">8</code>, <code class="inline">std::cin</code> reads it as the <strong>character</strong> <code class="inline">'8'</code>, not the integer <code class="inline">8</code>.</p>
+
+            <p>Each character in C++ corresponds to an integer value in the <strong>ASCII table</strong>. When <code class="inline">char</code> is implicitly converted to <code class="inline">int</code> (which happens on the <code class="inline">return x</code> statement), it returns the character's <em>ASCII code</em>:</p>
+
+            <table style="margin-top:12px; font-size:13.5px;">
+              <thead><tr><th>Character Typed</th><th>Char Stored</th><th>ASCII Value (Returned as int)</th></tr></thead>
+              <tbody>
+                <tr><td>8</td><td>'8'</td><td>56</td></tr>
+                <tr><td>4</td><td>'4'</td><td>52</td></tr>
+              </tbody>
+            </table>
+
+            <p style="margin-top:12px;">So the program computes <code class="inline">56 + 52 = 108</code> and prints <code class="inline">108</code> instead of <code class="inline">12</code>. The program is syntactically valid and even logically sound in structure — only the <em>data type</em> is wrong.</p>
+          </div>
+
+          <div class="code-block-wrapper">
+            <div class="code-header">
+              <div class="code-dots">
+                <div class="dot dot-orange"></div><div class="dot dot-purple"></div><div class="dot dot-white"></div>
+              </div>
+              <span class="code-filename">q4_fixed.cpp</span>
+            </div>
+            <pre><code><span class="c-preproc">#include</span> <span class="c-string">&lt;iostream&gt;</span>
+
+<span class="c-type">int</span> <span class="c-fn">readNumber</span><span class="c-op">() {</span>
+    <span class="c-op">std::cout &lt;&lt;</span> <span class="c-string">"Please enter a number: "</span><span class="c-op">;</span>
+    <span class="c-type">int</span> <span class="c-op">x{};</span>  <span class="c-comment">// ✅ FIX: Changed char to int. Now reads an actual integer.</span>
+    <span class="c-op">std::cin &gt;&gt; x;</span>
+    <span class="c-keyword">return</span> <span class="c-op">x;</span>  <span class="c-comment">// Returns 8 (the integer), not 56 (ASCII of '8')</span>
+<span class="c-op">}</span>
+
+<span class="c-type">void</span> <span class="c-fn">writeAnswer</span><span class="c-op">(</span><span class="c-type">int</span> <span class="c-op">x) {</span>
+    <span class="c-op">std::cout &lt;&lt;</span> <span class="c-string">"The sum is: "</span> <span class="c-op">&lt;&lt; x &lt;&lt;</span> <span class="c-string">'\n'</span><span class="c-op">;</span>
+<span class="c-op">}</span>
+
+<span class="c-type">int</span> <span class="c-fn">main</span><span class="c-op">() {</span>
+    <span class="c-type">int</span> <span class="c-op">x {</span> <span class="c-fn">readNumber</span><span class="c-op">() };</span>  <span class="c-comment">// x = 8 ✅</span>
+    <span class="c-type">int</span> <span class="c-op">y {</span> <span class="c-fn">readNumber</span><span class="c-op">() };</span>  <span class="c-comment">// y = 4 ✅</span>
+    <span class="c-fn">writeAnswer</span><span class="c-op">(x + y);</span>      <span class="c-comment">// 8 + 4 = 12 ✅</span>
+    <span class="c-keyword">return</span> <span class="c-number">0</span><span class="c-op">;</span>
+<span class="c-op">}</span></code></pre>
+          </div>
+
+          <div class="success-box box">
+            <div class="box-title">✅ Key Lessons</div>
+            <ul>
+              <li>Using the <strong>wrong data type</strong> is a subtle semantic error — the code compiles and runs, but operates on different data than intended.</li>
+              <li>The Watch Window would show <code class="inline">x = 56</code> after the first input, which is the first clue that something is wrong with the type.</li>
+              <li>Always match your variable types to the kind of data you're reading. Use <code class="inline">int</code> for integers, <code class="inline">char</code> only for single characters.</li>
+              <li>This is also a great example of why a static analyzer or compiler with <code class="inline">-Wchar-subscripts</code> can sometimes catch these issues.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- ═══════════════════ REVISION SHEET ═══════════════════ -->
+    <section id="s-revision" class="revision-sheet">
+      <h2>Master Revision Sheet — Chapter 3</h2>
+      <p style="opacity:0.85; margin-bottom:28px;">Everything you need to remember, distilled into the most important points for quick review.</p>
+
+      <h3>🔴 Error Types</h3>
+      <div class="revision-item"><strong>Syntax Error:</strong> Violates C++ grammar. Compiler catches it. Program won't compile.</div>
+      <div class="revision-item"><strong>Semantic Error:</strong> Valid syntax, wrong logic. Compiles but behaves incorrectly at runtime.</div>
+      <div class="revision-item"><strong>Undefined Behavior:</strong> Using uninitialized variables, dividing by zero, accessing out-of-bounds memory. Anything can happen.</div>
+
+      <h3 style="margin-top:24px;">🟠 Debugging Process (6 Steps)</h3>
+      <div class="revision-item">1. <strong>Find Root Cause</strong> → 2. <strong>Understand Why</strong> → 3. <strong>Plan Fix</strong> → 4. <strong>Implement Fix</strong> → 5. <strong>Retest Bug</strong> → 6. <strong>Test for Regressions</strong></div>
+
+      <h3 style="margin-top:24px;">🟡 Basic Tactics</h3>
+      <div class="revision-item"><strong>Comment Out:</strong> Bug disappears? Commented code is culprit. Bug stays? It's innocent.</div>
+      <div class="revision-item"><strong>Always use std::cerr</strong> for debug output — it's unbuffered and won't be delayed if program crashes.</div>
+      <div class="revision-item"><strong>Hi-Lo Strategy:</strong> Correct behavior so far = bug is after. Wrong behavior seen = bug is before.</div>
+      <div class="revision-item"><strong>#ifdef ENABLE_DEBUG:</strong> Wrap all debug output in preprocessor guards for easy toggle.</div>
+
+      <h3 style="margin-top:24px;">🟢 Integrated Debugger</h3>
+      <div class="revision-item"><strong>Step Into:</strong> Enters function calls. <strong>Step Over:</strong> Skips function calls. <strong>Step Out:</strong> Exits current function.</div>
+      <div class="revision-item"><strong>Breakpoint:</strong> Persistent pause point. Better than Run to Cursor for loops/repeated calls.</div>
+      <div class="revision-item"><strong>Watch Window:</strong> Live variable tracking. Can evaluate expressions. <strong>Locals:</strong> Auto-lists in-scope vars.</div>
+      <div class="revision-item"><strong>Call Stack:</strong> LIFO. Shows path to current execution point. Completed functions are absent.</div>
+      <div class="revision-item"><strong>Set Next Statement ≠ Step Back.</strong> Only moves marker. Does NOT restore variable values.</div>
+      <div class="revision-item"><strong>Use Debug Build Profile</strong> — Release build optimizations break debugger behavior.</div>
+
+      <h3 style="margin-top:24px;">🔵 Prevention</h3>
+      <div class="revision-item"><strong>Refactoring:</strong> Change structure WITHOUT changing behavior. Never do both simultaneously.</div>
+      <div class="revision-item"><strong>Defensive Programming:</strong> Anticipate all misuse. Validate all inputs.</div>
+      <div class="revision-item"><strong>assert():</strong> Enforces programmer assumptions. Crashes immediately if violated. From &lt;cassert&gt;.</div>
+      <div class="revision-item"><strong>Unit Tests:</strong> Small functions that test your code with many inputs. Act as a safety net for regressions.</div>
+      <div class="revision-item"><strong>Static Analysis:</strong> clang-tidy, cppcheck. Compile with <code class="inline" style="background:rgba(255,255,255,0.15); color:#F4A261;">-Wall -Wextra -Wpedantic</code>.</div>
+
+      <h3 style="margin-top:24px;">⚡ Quiz Key Concepts</h3>
+      <div class="revision-item"><strong>Q1:</strong> Pass by value → caller's variable unchanged. Discarded return value → data lost. Fix: no parameter, initialize with return value.</div>
+      <div class="revision-item"><strong>Q2:</strong> <code class="inline" style="background:rgba(255,255,255,0.15); color:#F4A261;">x = readNumber()</code> twice → overwrites x, y stays 0 → division by zero crash. Fix: assign to y on second call.</div>
+      <div class="revision-item"><strong>Q3:</strong> Call stack when in d(): main → a → b → d. c() is absent — it returned before d() was called.</div>
+      <div class="revision-item"><strong>Q4:</strong> <code class="inline" style="background:rgba(255,255,255,0.15); color:#F4A261;">char x</code> reads character, returns ASCII code (8→56, 4→52, sum=108). Fix: change to <code class="inline" style="background:rgba(255,255,255,0.15); color:#F4A261;">int x</code>.</div>
+    </section>
+
+  </main>
+</div>
+
+</body>
+</html>

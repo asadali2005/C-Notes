@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>C++ Notes – All Chapters</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F7F5FA;
+      --primary: #7C6ACF;
+      --primary-dark: #5f50a8;
+      --accent: #F4A261;
+      --text: #2E2A38;
+      --highlight: #B7A9E3;
+      --highlight-light: #EDE9F8;
+      --white: #ffffff;
+      --shadow: rgba(124,106,207,0.13);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 3rem 1.5rem;
+      min-height: 100vh;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    header h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      color: #6b6580;
+      margin-top: 0.5rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: 1.25rem;
+      padding: 2rem 1.5rem;
+      box-shadow: 0 4px 20px var(--shadow);
+      text-decoration: none;
+      color: var(--text);
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      border: 1px solid transparent;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 30px rgba(124,106,207,0.2);
+      border-color: var(--highlight);
+    }
+
+    .card .num {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .card h2 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+
+    .card p {
+      font-size: 0.9rem;
+      color: #6b6580;
+      line-height: 1.5;
+    }
+
+    .missing {
+      opacity: 0.35;
+      pointer-events: none;
+      filter: grayscale(1);
+    }
+
+    footer {
+      margin-top: 3rem;
+      font-size: 0.85rem;
+      color: #9a94b0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>C++ Notes</h1>
+    <p>All available chapters at a glance</p>
+  </header>
+
+  <div class="grid">
+    <a class="card missing" href="#">
+      <span class="num">1</span>
+      <h2>Chapter 1</h2>
+      <p>Coming soon…</p>
+    </a>
+
+    <a class="card" href="ch_2.html">
+      <span class="num">2</span>
+      <h2>C++ Basics – Functions and Files</h2>
+      <p>Functions, headers, forward declarations, and multi-file projects.</p>
+    </a>
+
+    <a class="card" href="ch_3.html">
+      <span class="num">3</span>
+      <h2>Debugging C++ Programs</h2>
+      <p>Debug strategies, syntax &amp; semantic errors, and preprocessor directives.</p>
+    </a>
+
+    <a class="card" href="ch_4.html">
+      <span class="num">4</span>
+      <h2>Fundamental Data Types</h2>
+      <p>Integers, floating-point, Boolean, chars, type conversion, and constants.</p>
+    </a>
+
+    <a class="card" href="ch_5.html">
+      <span class="num">5</span>
+      <h2>Constants &amp; Strings</h2>
+      <p>Constant expressions, constexpr, std::string, and literals.</p>
+    </a>
+  </div>
+
+  <footer>Virtual University – C++ Notes</footer>
+</body>
+</html>
